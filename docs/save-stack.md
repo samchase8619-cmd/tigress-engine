@@ -1,7 +1,6 @@
 # Save Stack
 
 Protocol:
-
 - CHECK_REGISTRY
 - ASSIGN_NEXT_ID
 - CREATE_SAVE

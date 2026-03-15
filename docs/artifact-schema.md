@@ -1,7 +1,6 @@
 # Artifact Schema
 
 Every major artifact should have:
-
 - id
 - title
 - artifact_type
