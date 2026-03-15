@@ -1,1 +1,9 @@
-{ "conversations": [] }
+{
+  "conversations": [
+    {
+      "id": "conv_2026-03-15T12-45-56-464Z",
+      "thread": "capture-cli",
+      "path": "data/conversations/conv_2026-03-15T12-45-56-464Z.json"
+    }
+  ]
+}
