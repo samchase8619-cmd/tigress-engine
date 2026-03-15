@@ -10,4 +10,7 @@ async function main() {
   console.log("System validation passed.");
 }
 
-main().catch((error) => { console.error(error); process.exit(1); });
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
