@@ -1,0 +1,10 @@
+{
+  "id": "conv_2026-03-15T12-45-56-464Z",
+  "thread": "capture-cli",
+  "timestamp": "2026-03-15T12:45:56.464Z",
+  "prompt": "",
+  "response": "Hello from ChatGPT\nSAVE_FILE_114 is mentioned here.",
+  "artifacts_detected": [
+    "SAVE_FILE_114"
+  ]
+}
