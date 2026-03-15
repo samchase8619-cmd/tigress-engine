@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐯 TigressOS Capture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    header {
+      border-bottom: 1px solid #2e2e50;
+      padding-bottom: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #c084fc;
+      letter-spacing: 0.02em;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #a0a0b8;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: #12122a;
+      border: 1px solid #2e2e50;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      padding: 0.65rem 0.85rem;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: #4ade80;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 320px;
+      line-height: 1.55;
+    }
+
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-save {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      background: #16a34a;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      margin-top: 0.25rem;
+    }
+
+    .btn-save:hover:not(:disabled) { background: #15803d; }
+    .btn-save:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #2e2e50;
+      margin: 1.75rem 0;
+    }
+
+    .result {
+      display: none;
+      background: #12122a;
+      border: 1px solid #2e2e50;
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      line-height: 1.75;
+      font-size: 0.95rem;
+    }
+
+    .result.visible { display: block; }
+
+    .result .line { display: flex; gap: 0.5rem; align-items: flex-start; }
+    .result .icon { flex-shrink: 0; }
+    .result .value { color: #a3e635; word-break: break-all; }
+
+    .error-msg {
+      display: none;
+      color: #f87171;
+      background: #1f0a0a;
+      border: 1px solid #7f1d1d;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🐯 TigressOS Capture</h1>
+    </header>
+
+    <div class="field">
+      <label for="label">Session label:</label>
+      <input type="text" id="label" placeholder="e.g. DD story bible development session" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label for="text">Paste your ChatGPT response below:</label>
+      <textarea id="text" placeholder="Paste ChatGPT output here…"></textarea>
+    </div>
+
+    <button class="btn-save" id="saveBtn">Save to TigressOS</button>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <hr class="divider" />
+
+    <div class="result" id="result">
+      <div class="line"><span class="icon">✅</span><span>Saved as <span class="value" id="rSaveId"></span></span></div>
+      <div class="line"><span class="icon">📄</span><span class="value" id="rFilePath"></span></div>
+      <div class="line" id="rArtifactsLine"><span class="icon">🔍</span><span>Artifacts detected: <span class="value" id="rArtifacts"></span></span></div>
+      <div class="line"><span class="icon">➡️</span><span>Next save: <span class="value" id="rNextSave"></span></span></div>
+    </div>
+  </div>
+
+  <script>
+    const saveBtn = document.getElementById('saveBtn');
+    const labelInput = document.getElementById('label');
+    const textInput = document.getElementById('text');
+    const resultDiv = document.getElementById('result');
+    const errorMsg = document.getElementById('errorMsg');
+
+    const rSaveId = document.getElementById('rSaveId');
+    const rFilePath = document.getElementById('rFilePath');
+    const rArtifactsLine = document.getElementById('rArtifactsLine');
+    const rArtifacts = document.getElementById('rArtifacts');
+    const rNextSave = document.getElementById('rNextSave');
+
+    saveBtn.addEventListener('click', async () => {
+      const text = textInput.value.trim();
+      const label = labelInput.value.trim();
+
+      errorMsg.classList.remove('visible');
+      resultDiv.classList.remove('visible');
+
+      if (!text) {
+        errorMsg.textContent = 'Please paste some text before saving.';
+        errorMsg.classList.add('visible');
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      try {
+        const response = await fetch('/api/capture', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, label }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Unknown server error');
+        }
+
+        rSaveId.textContent = data.assignedSaveId;
+        rFilePath.textContent = data.filePath;
+        rNextSave.textContent = data.nextSaveId;
+
+        if (data.artifactsDetected && data.artifactsDetected.length > 0) {
+          rArtifacts.textContent = data.artifactsDetected.join(', ');
+          rArtifactsLine.style.display = 'flex';
+        } else {
+          rArtifactsLine.style.display = 'none';
+        }
+
+        resultDiv.classList.add('visible');
+        textInput.value = '';
+      } catch (err) {
+        errorMsg.textContent = 'Error: ' + (err.message || 'Could not connect to TigressOS server. Is it running?');
+        errorMsg.classList.add('visible');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save to TigressOS';
+      }
+    });
+  </script>
+</body>
+</html>
