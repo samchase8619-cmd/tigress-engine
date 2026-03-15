@@ -30,7 +30,7 @@ export const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(join(__dirname, "../../ui/public")));
+app.use(express.static(join(process.cwd(), "src", "ui", "public")));
 
 app.post("/api/capture", async (req, res) => {
   try {
