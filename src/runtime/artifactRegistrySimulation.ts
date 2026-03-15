@@ -1,0 +1,1 @@
+export async function artifactRegistrySimulation() { return { status: "artifact_registry_simulation_ready" }; }

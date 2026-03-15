@@ -1,0 +1,1 @@
+export async function updateProjectRegistry(): Promise<void> { return; }

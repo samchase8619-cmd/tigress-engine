@@ -1,0 +1,1 @@
+export async function restoreBundleGeneration() { return { status: "restore_bundle_generation_placeholder" }; }
