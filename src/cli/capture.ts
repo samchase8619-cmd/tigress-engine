@@ -34,6 +34,11 @@ async function main(): Promise<void> {
     rl.on("close", () => resolve());
   });
 
+  // Fix: strip sentinel if it appears as the last line (Windows paste behaviour)
+  if (lines.length > 0 && lines[lines.length - 1].trim() === SENTINEL) {
+    lines.pop();
+  }
+
   const text = lines.join("\n");
 
   if (!text.trim()) {
