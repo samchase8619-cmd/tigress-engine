@@ -1,0 +1,13 @@
+{
+  "sessions": [
+    {
+      "id": "SESSION_OBJECT_001",
+      "status": "active",
+      "sources": 10,
+      "knowledge_objects": 31,
+      "graph_relations": 26,
+      "reasoning_traces": 8,
+      "research_documents": 7
+    }
+  ]
+}

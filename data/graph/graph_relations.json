@@ -1,0 +1,25 @@
+{
+  "relations": [
+    ["background_knowledge", "supports", "reading_comprehension"],
+    ["schema_activation", "enables", "reading_comprehension"],
+    ["narrative_compression", "enables", "narrative_reference_language"],
+    ["shared_cultural_memory", "enables", "meaning_emergence"],
+    ["narrative_signal_density", "supports", "engagement_hooks"],
+    ["engagement_hooks", "supports", "NARRATIVE_ENGINE"],
+    ["Stoneward_legitimacy_crisis", "destabilizes", "political_legitimacy"],
+    ["Stoneward_legitimacy_crisis", "leads_to", "Bridge_Opening_Attack"],
+    ["Bridge_Opening_Attack", "affects", "Brightveil"],
+    ["Bridge_Opening_Attack", "affects", "Ironreach"],
+    ["Bridge_Opening_Attack", "affects", "Wolfgate"],
+    ["Bridge_Opening_Attack", "affects", "Goldharbor"],
+    ["Bridge_Opening_Attack", "leads_to", "Lioness_identity"],
+    ["Lioness_identity", "changes_state_of", "Cydne_Soraya"],
+    ["The_CEO", "exploits", "Stoneward_legitimacy_crisis"],
+    ["The_CEO", "enables", "Corporate_consolidation"],
+    ["Corporate_consolidation", "affects", "security_control"],
+    ["Corporate_consolidation", "affects", "infrastructure_integrity"],
+    ["Systemic_urban_breakdown", "leads_to", "Second_Form_Manifestation"],
+    ["Second_Form_Manifestation", "changes_state_of", "Cydne_Soraya"],
+    ["Male_Draconic_Form", "contextualizes", "Systemic_urban_breakdown"]
+  ]
+}

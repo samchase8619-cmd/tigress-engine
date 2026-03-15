@@ -1,0 +1,7 @@
+{
+  "archive_baseline_highest": "SAVE_FILE_107",
+  "archive_baseline_next": "SAVE_FILE_108",
+  "current_runtime_highest": "SAVE_FILE_114",
+  "next_runtime_save": "SAVE_FILE_115",
+  "save_protocol": ["CHECK_REGISTRY", "ASSIGN_NEXT_ID", "CREATE_SAVE", "REGISTER_SAVE"]
+}

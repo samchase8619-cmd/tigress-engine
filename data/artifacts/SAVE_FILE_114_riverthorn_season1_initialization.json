@@ -1,0 +1,51 @@
+{
+  "artifact_id": "SAVE_FILE_114",
+  "artifact_type": "SAVE_FILE",
+  "title": "Riverthorn Writers Room — Season 1 Initialization",
+  "project": "Riverthorn",
+  "thread": "writers_room",
+  "date_created": "2026-03-15",
+  "initial_destabilization": {
+    "petal": "Stoneward",
+    "domain": "Law / Politics",
+    "world_state_effect": { "political_legitimacy": -1 },
+    "description": "Political legitimacy erosion caused by council gridlock, corruption allegations, and emergency power disputes."
+  },
+  "pilot_structure": {
+    "midpoint_event": {
+      "event_name": "Bridge Opening Attack",
+      "system_effects": {
+        "Stoneward": "legitimacy collapse",
+        "Brightveil": "media narrative conflict",
+        "Ironreach": "infrastructure security panic",
+        "Wolfgate": "security expansion",
+        "Goldharbor": "economic shock"
+      },
+      "world_state_effects": { "political_legitimacy": -3, "security_control": 1, "cultural_stability": -1 }
+    },
+    "ending_event": {
+      "event_name": "Birth of the Lioness",
+      "character": "Cydne Soraya",
+      "identity_origin": "public_created",
+      "public_moniker": "The Lioness",
+      "rule": "Cydne does not name the identity. The city creates the myth."
+    }
+  },
+  "season_antagonist": {
+    "actor": "The CEO",
+    "institution": "Goldharbor",
+    "domain": "Economy",
+    "strategy": ["pressure city council", "fund expanded security contracts", "acquire failing infrastructure assets", "manipulate Brightveil media narratives"],
+    "ideology": "corporate stability over democratic instability"
+  },
+  "season_cascade": [
+    "Stoneward legitimacy crisis", "Bridge attack", "Lioness identity emerges",
+    "CEO consolidates power", "City destabilizes", "Cydne manifests draconic form"
+  ],
+  "season_finale": {
+    "event_name": "Second Form Manifestation",
+    "character": "Cydne Soraya",
+    "transformation": "Male Draconic Form",
+    "symbolism": { "lioness_form": "civic protector", "draconic_form": "primal power of the city" }
+  }
+}
