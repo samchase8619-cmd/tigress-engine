@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "RT_NODE_001",
+      "domain": "World",
+      "system_type": "Distinction",
+      "thought": "Sixth petal is axis not variable",
+      "I": 3,
+      "L": 7,
+      "lock_point": "geometry holds it",
+      "mechanism": "Signal Distortion",
+      "tags": [
+        "structure",
+        "geometry"
+      ]
+    },
+    {
+      "id": "RT_NODE_002",
+      "domain": "Self",
+      "system_type": "Recursion",
+      "thought": "The observer changes the observed system",
+      "I": 8,
+      "L": 5,
+      "lock_point": "feedback loop confirmed",
+      "mechanism": "Reflection Loop",
+      "tags": [
+        "observer",
+        "recursion",
+        "identity"
+      ]
+    },
+    {
+      "id": "RT_NODE_003",
+      "domain": "Language",
+      "system_type": "Pattern",
+      "thought": "Naming collapses possibility space",
+      "I": 6,
+      "L": 9,
+      "lock_point": "semantic compression",
+      "mechanism": "Lexical Binding",
+      "tags": [
+        "language",
+        "compression",
+        "naming"
+      ]
+    }
+  ]
+}

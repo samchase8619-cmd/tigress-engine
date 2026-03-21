@@ -1,0 +1,345 @@
+{
+  "exported_at": "2026-03-21T04:54:32.596Z",
+  "registries": {
+    "artifacts": {
+      "artifacts": [
+        {
+          "id": "SAVE_FILE_105",
+          "title": "tigressos_application_code_layer",
+          "artifact_type": "SAVE_FILE",
+          "project": "TigressOS",
+          "path": "data/artifacts/SAVE_FILE_105_tigressos_application_code_layer.json"
+        },
+        {
+          "id": "SAVE_FILE_106",
+          "title": "tigressos_runtime_emulator",
+          "artifact_type": "SAVE_FILE",
+          "project": "TigressOS",
+          "path": "data/artifacts/SAVE_FILE_106_tigressos_runtime_emulator.json"
+        },
+        {
+          "id": "SAVE_FILE_107",
+          "title": "tigressos_save_registry",
+          "artifact_type": "SAVE_FILE",
+          "project": "TigressOS",
+          "path": "data/artifacts/SAVE_FILE_107_tigressos_save_registry.json"
+        },
+        {
+          "id": "SAVE_FILE_114",
+          "title": "Riverthorn Writers Room — Season 1 Initialization",
+          "artifact_type": "SAVE_FILE",
+          "project": "Riverthorn",
+          "path": "data/artifacts/SAVE_FILE_114_riverthorn_season1_initialization.json"
+        }
+      ]
+    },
+    "saveStack": {
+      "archive_baseline_highest": "SAVE_FILE_107",
+      "archive_baseline_next": "SAVE_FILE_108",
+      "current_runtime_highest": "SAVE_FILE_115",
+      "next_runtime_save": "SAVE_FILE_116",
+      "save_protocol": [
+        "CHECK_REGISTRY",
+        "ASSIGN_NEXT_ID",
+        "CREATE_SAVE",
+        "REGISTER_SAVE"
+      ]
+    },
+    "projects": {
+      "projects": [
+        {
+          "id": "PROJECT_001",
+          "name": "Riverthorn",
+          "type": "narrative_world"
+        },
+        {
+          "id": "PROJECT_002",
+          "name": "TigressOS",
+          "type": "system_architecture"
+        },
+        {
+          "id": "PROJECT_003",
+          "name": "Research",
+          "type": "knowledge_program"
+        },
+        {
+          "id": "PROJECT_004",
+          "name": "Campaign",
+          "type": "simulation_runtime"
+        }
+      ]
+    },
+    "sessions": {
+      "sessions": [
+        {
+          "id": "SESSION_OBJECT_001",
+          "status": "active",
+          "sources": 10,
+          "knowledge_objects": 31,
+          "graph_relations": 26,
+          "reasoning_traces": 8,
+          "research_documents": 7
+        }
+      ]
+    },
+    "conversations": {
+      "conversations": [
+        {
+          "id": "conv_2026-03-15T12-45-56-464Z",
+          "thread": "capture-cli",
+          "path": "data/conversations/conv_2026-03-15T12-45-56-464Z.json"
+        }
+      ]
+    }
+  },
+  "graph": {
+    "nodes": {
+      "nodes": [
+        {
+          "id": "The_Tree",
+          "type": "GRAPH_NODE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Cydne_Soraya",
+          "type": "CHARACTER_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Goldharbor",
+          "type": "LOCATION_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Stoneward",
+          "type": "LOCATION_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Brightveil",
+          "type": "LOCATION_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Ironreach",
+          "type": "LOCATION_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Wolfgate",
+          "type": "LOCATION_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "schema_activation",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "background_knowledge",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "working_memory",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "reading_comprehension",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "narrative_reference_language",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "shared_cultural_memory",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "narrative_compression",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "meaning_emergence",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "narrative_signal_density",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "engagement_hooks",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "computational_story_structure",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "enlitrics_framework",
+          "type": "KNOWLEDGE_OBJECT",
+          "domain": "Research"
+        },
+        {
+          "id": "Stoneward_legitimacy_crisis",
+          "type": "EVENT_TRIGGER",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Bridge_Opening_Attack",
+          "type": "EVENT_RECORD",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Lioness_identity",
+          "type": "NARRATIVE_OBJECT",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "The_CEO",
+          "type": "CHARACTER_FILE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Corporate_consolidation",
+          "type": "GRAPH_NODE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Systemic_urban_breakdown",
+          "type": "GRAPH_NODE",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Second_Form_Manifestation",
+          "type": "EVENT_RECORD",
+          "domain": "Riverthorn"
+        },
+        {
+          "id": "Male_Draconic_Form",
+          "type": "NARRATIVE_OBJECT",
+          "domain": "Riverthorn"
+        }
+      ]
+    },
+    "relations": {
+      "relations": [
+        [
+          "background_knowledge",
+          "supports",
+          "reading_comprehension"
+        ],
+        [
+          "schema_activation",
+          "enables",
+          "reading_comprehension"
+        ],
+        [
+          "narrative_compression",
+          "enables",
+          "narrative_reference_language"
+        ],
+        [
+          "shared_cultural_memory",
+          "enables",
+          "meaning_emergence"
+        ],
+        [
+          "narrative_signal_density",
+          "supports",
+          "engagement_hooks"
+        ],
+        [
+          "engagement_hooks",
+          "supports",
+          "NARRATIVE_ENGINE"
+        ],
+        [
+          "Stoneward_legitimacy_crisis",
+          "destabilizes",
+          "political_legitimacy"
+        ],
+        [
+          "Stoneward_legitimacy_crisis",
+          "leads_to",
+          "Bridge_Opening_Attack"
+        ],
+        [
+          "Bridge_Opening_Attack",
+          "affects",
+          "Brightveil"
+        ],
+        [
+          "Bridge_Opening_Attack",
+          "affects",
+          "Ironreach"
+        ],
+        [
+          "Bridge_Opening_Attack",
+          "affects",
+          "Wolfgate"
+        ],
+        [
+          "Bridge_Opening_Attack",
+          "affects",
+          "Goldharbor"
+        ],
+        [
+          "Bridge_Opening_Attack",
+          "leads_to",
+          "Lioness_identity"
+        ],
+        [
+          "Lioness_identity",
+          "changes_state_of",
+          "Cydne_Soraya"
+        ],
+        [
+          "The_CEO",
+          "exploits",
+          "Stoneward_legitimacy_crisis"
+        ],
+        [
+          "The_CEO",
+          "enables",
+          "Corporate_consolidation"
+        ],
+        [
+          "Corporate_consolidation",
+          "affects",
+          "security_control"
+        ],
+        [
+          "Corporate_consolidation",
+          "affects",
+          "infrastructure_integrity"
+        ],
+        [
+          "Systemic_urban_breakdown",
+          "leads_to",
+          "Second_Form_Manifestation"
+        ],
+        [
+          "Second_Form_Manifestation",
+          "changes_state_of",
+          "Cydne_Soraya"
+        ],
+        [
+          "Male_Draconic_Form",
+          "contextualizes",
+          "Systemic_urban_breakdown"
+        ]
+      ]
+    }
+  }
+}

@@ -1,8 +1,24 @@
 {
   "projects": [
-    { "id": "PROJECT_001", "name": "Riverthorn", "type": "narrative_world" },
-    { "id": "PROJECT_002", "name": "TigressOS", "type": "system_architecture" },
-    { "id": "PROJECT_003", "name": "Research", "type": "knowledge_program" },
-    { "id": "PROJECT_004", "name": "Campaign", "type": "simulation_runtime" }
+    {
+      "id": "PROJECT_001",
+      "name": "Riverthorn",
+      "type": "narrative_world"
+    },
+    {
+      "id": "PROJECT_002",
+      "name": "TigressOS",
+      "type": "system_architecture"
+    },
+    {
+      "id": "PROJECT_003",
+      "name": "Research",
+      "type": "knowledge_program"
+    },
+    {
+      "id": "PROJECT_004",
+      "name": "Campaign",
+      "type": "simulation_runtime"
+    }
   ]
 }
