@@ -1,0 +1,10 @@
+{
+  "id": "conv_2026-03-15T13-10-40-689Z",
+  "thread": "capture-cli",
+  "timestamp": "2026-03-15T13:10:40.690Z",
+  "prompt": "",
+  "response": "This is the first TigressOS capture test. SAVE_FILE_114 is confirmed loaded.",
+  "artifacts_detected": [
+    "SAVE_FILE_114"
+  ]
+}

@@ -4,6 +4,11 @@
       "id": "conv_2026-03-15T12-45-56-464Z",
       "thread": "capture-cli",
       "path": "data/conversations/conv_2026-03-15T12-45-56-464Z.json"
+    },
+    {
+      "id": "conv_2026-03-15T13-10-40-689Z",
+      "thread": "capture-cli",
+      "path": "data/conversations/conv_2026-03-15T13-10-40-689Z.json"
     }
   ]
 }
