@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NODE INTAKE — TigressOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #e0e0e0;
+      --muted: #666;
+      --accent: #7fff7f;
+      --warn: #ff9f43;
+      --error: #ff6b6b;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      min-height: 100vh;
+      padding: 1.5rem 1rem;
+    }
+
+    h1 {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="password"],
+    textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 3px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="password"]:focus,
+    textarea:focus {
+      border-color: #444;
+    }
+
+    .token-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+    }
+
+    .token-row > div { flex: 1; }
+
+    button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.6rem 1rem;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    button:hover { border-color: #555; color: #fff; }
+
+    #syncBtn {
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.8rem;
+      font-size: 0.9rem;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    #syncBtn:hover { background: #0f1f0f; }
+    #syncBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    textarea { min-height: 180px; }
+
+    .section { margin-bottom: 1.25rem; }
+
+    #results {
+      display: none;
+      margin-top: 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1rem;
+      background: var(--surface);
+    }
+
+    .results-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-row:last-of-type { border-bottom: none; }
+
+    .stat-label { color: var(--muted); }
+
+    .stat-value { font-weight: bold; }
+
+    .stat-value.pushed { color: var(--accent); }
+    .stat-value.skipped { color: var(--warn); }
+    .stat-value.total { color: var(--text); }
+
+    #status {
+      margin-top: 0.75rem;
+      font-size: 0.82rem;
+      min-height: 1.2em;
+    }
+
+    .ok { color: var(--accent); }
+    .err { color: var(--error); }
+    .info { color: var(--muted); }
+
+    .hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>NODE INTAKE</h1>
+  <p class="subtitle">TigressOS / Riverthorn sync utility</p>
+
+  <div class="section token-row">
+    <div>
+      <label for="token">GitHub Token</label>
+      <input type="password" id="token" placeholder="ghp_..." autocomplete="off">
+    </div>
+    <button id="saveTokenBtn">Save</button>
+  </div>
+  <p class="hint" style="margin-top:-0.9rem; margin-bottom:1.25rem;">
+    Fine-grained PAT with <strong>Contents: Read &amp; Write</strong> on this repo only. Stored in localStorage.
+  </p>
+
+  <div class="section">
+    <label for="logInput">Paste LOG</label>
+    <textarea id="logInput" placeholder="RT_NODE_### | Domain | System Type | Thought | I:# L:# | Lock: description | Mechanism | tag1, tag2"></textarea>
+    <p class="hint">Paste full log output. Non-matching lines are ignored.</p>
+  </div>
+
+  <button id="syncBtn">SYNC</button>
+
+  <div id="status" class="info"></div>
+
+  <div id="results">
+    <div class="results-title">Sync Report</div>
+    <div class="stat-row">
+      <span class="stat-label">Pushed</span>
+      <span class="stat-value pushed" id="rPushed">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Skipped</span>
+      <span class="stat-value skipped" id="rSkipped">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Total nodes</span>
+      <span class="stat-value total" id="rTotal">—</span>
+    </div>
+  </div>
+
+  <script>
+    const REPO   = 'samchase8619-cmd/tigress-engine';
+    const BRANCH = 'master';
+    const FILE   = 'data/nodes.json';
+    const API    = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+
+    // RT_NODE_### | Domain | System Type | Thought | I:x L:y | Lock: desc | Mechanism | tags
+    // "Lock: " prefix is optional
+    const NODE_RE = /^(RT_NODE_\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*I:(\d+)\s+L:(\d+)\s*\|\s*(?:Lock:\s*)?([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*(.+)$/;
+
+    const $ = id => document.getElementById(id);
+
+    // Restore saved token
+    const saved = localStorage.getItem('rt_ghtoken');
+    if (saved) $('token').value = saved;
+
+    $('saveTokenBtn').addEventListener('click', () => {
+      const t = $('token').value.trim();
+      if (!t) return;
+      localStorage.setItem('rt_ghtoken', t);
+      setStatus('Token saved.', 'ok');
+    });
+
+    function parseLog(text) {
+      const nodes = [];
+      for (const raw of text.split('\n')) {
+        const line = raw.trim();
+        if (!line || line.startsWith('#')) continue;
+        const m = line.match(NODE_RE);
+        if (!m) continue;
+        const [, id, domain, system_type, thought, iStr, lStr, lock_point, mechanism, tagsRaw] = m;
+        nodes.push({
+          id: id.trim(),
+          domain: domain.trim(),
+          system_type: system_type.trim(),
+          thought: thought.trim(),
+          I: parseInt(iStr, 10),
+          L: parseInt(lStr, 10),
+          lock_point: lock_point.trim(),
+          mechanism: mechanism.trim(),
+          tags: tagsRaw.split(',').map(t => t.trim()).filter(Boolean),
+        });
+      }
+      return nodes;
+    }
+
+    function setStatus(msg, cls = 'info') {
+      const el = $('status');
+      el.textContent = msg;
+      el.className = cls;
+    }
+
+    async function ghGet(token) {
+      const res = await fetch(`${API}?ref=${BRANCH}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+      });
+      if (!res.ok) throw new Error(`GitHub GET failed: ${res.status} ${res.statusText}`);
+      return res.json();
+    }
+
+    async function ghPut(token, content, sha, message) {
+      const res = await fetch(API, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message, content: btoa(content), sha, branch: BRANCH }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(`GitHub PUT failed: ${res.status} — ${err.message || res.statusText}`);
+      }
+      return res.json();
+    }
+
+    $('syncBtn').addEventListener('click', async () => {
+      const token = $('token').value.trim();
+      if (!token) { setStatus('Enter a GitHub token first.', 'err'); return; }
+
+      const logText = $('logInput').value;
+      const incoming = parseLog(logText);
+      if (incoming.length === 0) {
+        setStatus('No RT_NODE lines found in pasted text.', 'err');
+        return;
+      }
+
+      $('syncBtn').disabled = true;
+      $('results').style.display = 'none';
+      setStatus(`Parsed ${incoming.length} node(s). Fetching store…`, 'info');
+
+      try {
+        // 1. Fetch current nodes.json
+        const file = await ghGet(token);
+        const existing = JSON.parse(atob(file.content));
+        const existingIds = new Set(existing.nodes.map(n => n.id));
+
+        // 2. Merge
+        let pushed = 0, skipped = 0;
+        for (const node of incoming) {
+          if (existingIds.has(node.id)) { skipped++; }
+          else { existing.nodes.push(node); existingIds.add(node.id); pushed++; }
+        }
+
+        if (pushed === 0) {
+          setStatus(`Nothing new — all ${skipped} node(s) already stored.`, 'info');
+          $('rPushed').textContent = 0;
+          $('rSkipped').textContent = skipped;
+          $('rTotal').textContent = existing.nodes.length;
+          $('results').style.display = 'block';
+          return;
+        }
+
+        // 3. Commit
+        setStatus(`Pushing ${pushed} new node(s)…`, 'info');
+        const newContent = JSON.stringify(existing, null, 2) + '\n';
+        await ghPut(token, newContent, file.sha, `Add ${pushed} Riverthorn node(s) via node-intake`);
+
+        $('rPushed').textContent = pushed;
+        $('rSkipped').textContent = skipped;
+        $('rTotal').textContent = existing.nodes.length;
+        $('results').style.display = 'block';
+        setStatus(`Done. ${pushed} node(s) committed to ${BRANCH}.`, 'ok');
+
+      } catch (err) {
+        setStatus(err.message, 'err');
+      } finally {
+        $('syncBtn').disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
