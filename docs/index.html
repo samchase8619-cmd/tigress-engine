@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RiverThorn</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --river: #1a3a4a;
+    --thorn: #c8a96e;
+    --deep: #0d1f29;
+    --surface: #162838;
+    --glass: rgba(26,58,74,0.6);
+    --text: #e8dcc8;
+    --muted: #8a9ba8;
+    --danger: #c86e6e;
+    --green: #6ec8a0;
+    --card-bg: rgba(22,40,56,0.9);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Atmospheric background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(200,169,110,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(26,58,74,0.8) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 100% at 50% 50%, rgba(13,31,41,1) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding-bottom: 80px; }
+
+  /* Header */
+  .header {
+    padding: 48px 24px 24px;
+    position: relative;
+  }
+  .header-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--text);
+  }
+  .header-logo span { color: var(--thorn); }
+  .header-sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .header-stats {
+    position: absolute;
+    right: 24px;
+    top: 52px;
+    text-align: right;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    color: var(--thorn);
+    line-height: 1;
+  }
+  .stat-label { font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+  /* Nav tabs */
+  .nav {
+    display: flex;
+    padding: 0 24px;
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 8px 4px;
+    background: transparent;
+    border: 1px solid rgba(200,169,110,0.15);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .nav-btn.active {
+    background: rgba(200,169,110,0.1);
+    border-color: var(--thorn);
+    color: var(--thorn);
+  }
+
+  /* Panels */
+  .panel { display: none; padding: 0 24px; }
+  .panel.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Section label */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(200,169,110,0.15);
+  }
+
+  /* Capture panel */
+  .domain-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .chip {
+    padding: 5px 10px;
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 20px;
+    font-size: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .chip.selected {
+    background: rgba(200,169,110,0.12);
+    border-color: var(--thorn);
+    color: var(--thorn);
+  }
+
+  .capture-box {
+    width: 100%;
+    min-height: 140px;
+    background: var(--card-bg);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 4px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .capture-box:focus { border-color: rgba(200,169,110,0.5); }
+  .capture-box::placeholder { color: var(--muted); font-style: italic; }
+
+  .instability-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .instability-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; white-space: nowrap; }
+  .instability-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(200,169,110,0.15);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+  }
+  .instability-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--green), var(--thorn), var(--danger));
+    transition: width 0.2s;
+  }
+  .instability-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--thorn);
+    cursor: grab;
+    box-shadow: 0 0 8px rgba(200,169,110,0.4);
+    transition: left 0.1s;
+  }
+  .instability-val { font-size: 11px; color: var(--thorn); width: 24px; text-align: right; }
+
+  .lock-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .lock-input {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 3px;
+    padding: 8px 10px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    outline: none;
+  }
+  .lock-input:focus { border-color: rgba(200,169,110,0.4); }
+  .lock-input::placeholder { color: var(--muted); }
+
+  .btn-save {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(200,169,110,0.15), rgba(200,169,110,0.08));
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 3px;
+    color: var(--thorn);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-save:active { transform: scale(0.98); background: rgba(200,169,110,0.2); }
+
+  /* Browse panel */
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+
+  .node-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(200,169,110,0.12);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .node-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--thorn);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .node-card:active { transform: scale(0.99); }
+  .node-card.expanded::before { opacity: 1; }
+
+  .card-top { display: flex; align-items: flex-start; gap: 10px; }
+  .card-domain {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--thorn);
+    background: rgba(200,169,110,0.1);
+    padding: 3px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .card-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+    flex: 1;
+  }
+  .card-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+  }
+  .instability-bar {
+    flex: 1;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .instability-bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    background: linear-gradient(90deg, var(--green), var(--thorn), var(--danger));
+  }
+  .card-date { font-size: 9px; color: var(--muted); }
+
+  .card-expanded {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(200,169,110,0.1);
+  }
+  .node-card.expanded .card-expanded { display: block; }
+
+  .lock-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--river);
+    background: var(--thorn);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin: 4px 4px 0 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .connections-list { margin-top: 10px; }
+  .conn-item {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .conn-item:hover { color: var(--thorn); }
+  .conn-arrow { color: var(--thorn); margin-right: 6px; }
+
+  /* Connect panel */
+  .map-area {
+    background: var(--card-bg);
+    border: 1px solid rgba(200,169,110,0.15);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .connect-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid rgba(200,169,110,0.3);
+    border-radius: 20px;
+    margin: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(200,169,110,0.05);
+  }
+  .connect-node.selected-a {
+    background: rgba(200,169,110,0.2);
+    border-color: var(--thorn);
+    color: var(--thorn);
+  }
+  .connect-node.selected-b {
+    background: rgba(110,200,160,0.15);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .connection-type {
+    display: flex;
+    gap: 6px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .conn-type-btn {
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 3px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .conn-type-btn.active {
+    background: rgba(200,169,110,0.1);
+    border-color: var(--thorn);
+    color: var(--thorn);
+  }
+
+  .existing-connections { margin-top: 8px; }
+  .edge-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--card-bg);
+    border: 1px solid rgba(200,169,110,0.1);
+    border-radius: 3px;
+    margin-bottom: 6px;
+    font-size: 11px;
+  }
+  .edge-node { color: var(--text); font-family: 'Cormorant Garamond', serif; font-size: 13px; }
+  .edge-type { font-size: 9px; color: var(--thorn); letter-spacing: 0.1em; text-transform: uppercase; background: rgba(200,169,110,0.1); padding: 2px 6px; border-radius: 8px; }
+  .edge-arrow { color: var(--muted); }
+
+  /* Context panel */
+  .context-preview {
+    background: var(--card-bg);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+  .context-preview::-webkit-scrollbar { width: 3px; }
+  .context-preview::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.3); border-radius: 2px; }
+
+  .context-controls { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .ctx-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 8px;
+    background: transparent;
+    border: 1px solid rgba(200,169,110,0.25);
+    border-radius: 3px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .ctx-btn.primary {
+    border-color: var(--thorn);
+    color: var(--thorn);
+    background: rgba(200,169,110,0.08);
+  }
+  .ctx-btn:active { transform: scale(0.97); }
+
+  .copy-flash {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--thorn);
+    color: var(--deep);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    font-family: 'DM Mono', monospace;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .copy-flash.show { opacity: 1; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    background: rgba(13,31,41,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(200,169,110,0.15);
+    z-index: 50;
+  }
+  .bottom-nav-btn {
+    flex: 1;
+    padding: 12px 4px 16px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .bottom-nav-btn.active { color: var(--thorn); }
+  .bottom-nav-btn svg { width: 20px; height: 20px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(22,40,56,0.95);
+    border: 1px solid var(--thorn);
+    color: var(--thorn);
+    padding: 10px 20px;
+    border-radius: 3px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  input[type=range] { display: none; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <div class="header-logo">River<span>Thorn</span></div>
+    <div class="header-sub">coherence under instability</div>
+    <div class="header-stats">
+      <div class="stat-num" id="nodeCount">0</div>
+      <div class="stat-label">nodes</div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchPanel('capture')">Capture</button>
+    <button class="nav-btn" onclick="switchPanel('browse')">Browse</button>
+    <button class="nav-btn" onclick="switchPanel('connect')">Connect</button>
+    <button class="nav-btn" onclick="switchPanel('context')">Context</button>
+  </div>
+
+  <!-- CAPTURE -->
+  <div class="panel active" id="panel-capture">
+    <div class="section-label">Domain</div>
+    <div class="domain-chips" id="domainChips">
+      <button class="chip" onclick="toggleChip(this,'Show')">Show</button>
+      <button class="chip" onclick="toggleChip(this,'World')">World</button>
+      <button class="chip" onclick="toggleChip(this,'Cards')">Cards</button>
+      <button class="chip" onclick="toggleChip(this,'D&D')">D&D</button>
+      <button class="chip" onclick="toggleChip(this,'Paper')">Paper</button>
+      <button class="chip" onclick="toggleChip(this,'App')">App</button>
+      <button class="chip" onclick="toggleChip(this,'Framework')">Framework</button>
+    </div>
+
+    <div class="section-label" style="margin-top:4px;">Thought</div>
+    <textarea class="capture-box" id="captureText" placeholder="What just came to you…"></textarea>
+
+    <div class="instability-row" style="margin-top:14px;">
+      <span class="instability-label">instability</span>
+      <div class="instability-track" id="instTrack" onclick="handleTrackClick(event)">
+        <div class="instability-fill" id="instFill" style="width:40%"></div>
+        <div class="instability-thumb" id="instThumb" style="left:40%"></div>
+      </div>
+      <span class="instability-val" id="instVal">4</span>
+    </div>
+
+    <div class="section-label">Lock Point</div>
+    <div class="lock-row">
+      <input class="lock-input" id="lockInput" placeholder="what holds this stable?" />
+    </div>
+
+    <button class="btn-save" onclick="saveNode()">— Save to RiverThorn —</button>
+  </div>
+
+  <!-- BROWSE -->
+  <div class="panel" id="panel-browse">
+    <div class="filter-row" id="filterRow">
+      <button class="chip selected" onclick="filterBy(this,'all')">All</button>
+      <button class="chip" onclick="filterBy(this,'Show')">Show</button>
+      <button class="chip" onclick="filterBy(this,'World')">World</button>
+      <button class="chip" onclick="filterBy(this,'Cards')">Cards</button>
+      <button class="chip" onclick="filterBy(this,'D&D')">D&D</button>
+      <button class="chip" onclick="filterBy(this,'Paper')">Paper</button>
+      <button class="chip" onclick="filterBy(this,'App')">App</button>
+      <button class="chip" onclick="filterBy(this,'Framework')">Framework</button>
+    </div>
+    <div id="nodeList"></div>
+  </div>
+
+  <!-- CONNECT -->
+  <div class="panel" id="panel-connect">
+    <div class="section-label">Select two nodes to connect</div>
+    <div class="map-area" id="mapArea"></div>
+
+    <div id="connectionForm" style="display:none">
+      <div class="section-label">Connection type</div>
+      <div class="connection-type">
+        <button class="conn-type-btn active" onclick="selectConnType(this,'feeds')">feeds</button>
+        <button class="conn-type-btn" onclick="selectConnType(this,'mirrors')">mirrors</button>
+        <button class="conn-type-btn" onclick="selectConnType(this,'tensions')">tensions</button>
+        <button class="conn-type-btn" onclick="selectConnType(this,'locks')">locks</button>
+        <button class="conn-type-btn" onclick="selectConnType(this,'destabilizes')">destabilizes</button>
+      </div>
+      <button class="btn-save" onclick="saveConnection()">— Create Connection —</button>
+    </div>
+
+    <div id="edgeList" style="margin-top:20px"></div>
+  </div>
+
+  <!-- CONTEXT -->
+  <div class="panel" id="panel-context">
+    <div class="section-label">Context for AI</div>
+    <div class="context-controls">
+      <button class="ctx-btn" onclick="buildContext('all')">All nodes</button>
+      <button class="ctx-btn" onclick="buildContext('recent')">Recent 10</button>
+      <button class="ctx-btn" onclick="buildContext('spine')">Spine only</button>
+    </div>
+    <div class="context-preview" id="contextPreview">Select a context type above to generate your AI load package.</div>
+    <div class="context-controls">
+      <button class="ctx-btn primary" onclick="copyContext()">Copy to clipboard</button>
+      <button class="ctx-btn" onclick="clearContext()">Clear</button>
+    </div>
+    <div class="section-label" style="margin-top:8px;">Paste into Claude or ChatGPT to restore your RiverThorn context</div>
+  </div>
+
+</div>
+
+<!-- Bottom nav -->
+<div class="bottom-nav">
+  <button class="bottom-nav-btn active" id="nav-capture" onclick="switchPanel('capture')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+    Capture
+  </button>
+  <button class="bottom-nav-btn" id="nav-browse" onclick="switchPanel('browse')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Browse
+  </button>
+  <button class="bottom-nav-btn" id="nav-connect" onclick="switchPanel('connect')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11.5l8-4M8 12.5l8 4"/></svg>
+    Connect
+  </button>
+  <button class="bottom-nav-btn" id="nav-context" onclick="switchPanel('context')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    Context
+  </button>
+</div>
+
+<div class="copy-flash" id="copyFlash">Copied to clipboard</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────
+const SPINE = `RIVERTHORN FRAMEWORK — Spine Document
+
+Core Insight: Real things are not stable. RiverThorn maps, measures, and uses instability rather than eliminating it.
+
+The Two Forces:
+- INSTABILITY: The fuzziness, drift, wobble that makes a system feel alive and real.
+- LOCK: Not stability — the center point that keeps a system coherent while in motion.
+
+Governing Equation: Instability + Lock = Coherent Living System
+Too much Lock → rigid, dead. Too much Instability → collapse. Right ratio → alive.
+
+Why RiverThorn: River (flow, instability, always changing) + Thorn (lock point, catches, holds, anchors).
+
+The Ecosystem:
+- The Show — original vision, north star
+- Academic Model — framework formalized, weather map for structures  
+- Book — model made readable and tangible
+- Cards — system made playable and sellable
+- D&D World — framework made explorable (pure worldbuilding)
+- Paper — academic legitimacy
+- TigressOS — digital engine that runs and remembers it all
+
+The Instability Engine: Mechanism managing Lock/Instability relationship in every RiverThorn system.
+Every entity has: instability value, lock points, drift threshold, failure modes.
+
+Go-to-Market: Kickstarter (Book + Cards + D&D) funds Show + App + Paper.
+
+Workshop Model: Lead (vision + connections) + Specialists (domains). TigressOS holds the picture so the lead can lead.`;
+
+let nodes = JSON.parse(localStorage.getItem('rt_nodes') || '[]');
+let edges = JSON.parse(localStorage.getItem('rt_edges') || '[]');
+let currentFilter = 'all';
+let selectedDomains = [];
+let instabilityVal = 4;
+let connTypeSelected = 'feeds';
+let connNodeA = null;
+let connNodeB = null;
+
+// ── Persistence ────────────────────────────────────────────
+function save() {
+  localStorage.setItem('rt_nodes', JSON.stringify(nodes));
+  localStorage.setItem('rt_edges', JSON.stringify(edges));
+  updateCount();
+}
+
+function updateCount() {
+  document.getElementById('nodeCount').textContent = nodes.length;
+}
+
+// ── Panel switching ────────────────────────────────────────
+function switchPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const map = ['capture','browse','connect','context'];
+  navBtns[map.indexOf(name)].classList.add('active');
+  if (name === 'browse') renderNodes();
+  if (name === 'connect') renderConnectPanel();
+  if (name === 'context') document.getElementById('contextPreview').textContent = 'Select a context type above to generate your AI load package.';
+}
+
+// ── Domain chips ───────────────────────────────────────────
+function toggleChip(el, val) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    if (!selectedDomains.includes(val)) selectedDomains.push(val);
+  } else {
+    selectedDomains = selectedDomains.filter(d => d !== val);
+  }
+}
+
+// ── Instability slider ─────────────────────────────────────
+function handleTrackClick(e) {
+  const track = document.getElementById('instTrack');
+  const rect = track.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  setInstability(Math.round(pct * 10));
+}
+
+function setInstability(val) {
+  instabilityVal = val;
+  const pct = val * 10;
+  document.getElementById('instFill').style.width = pct + '%';
+  document.getElementById('instThumb').style.left = pct + '%';
+  document.getElementById('instVal').textContent = val;
+}
+
+// Touch drag on instability
+(function() {
+  let dragging = false;
+  const thumb = () => document.getElementById('instThumb');
+  const track = () => document.getElementById('instTrack');
+
+  document.addEventListener('touchstart', e => {
+    if (e.target === thumb()) { dragging = true; e.preventDefault(); }
+  }, { passive: false });
+
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    e.preventDefault();
+    const rect = track().getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.touches[0].clientX - rect.left) / rect.width));
+    setInstability(Math.round(pct * 10));
+  }, { passive: false });
+
+  document.addEventListener('touchend', () => { dragging = false; });
+})();
+
+// ── Save node ──────────────────────────────────────────────
+function saveNode() {
+  const text = document.getElementById('captureText').value.trim();
+  if (!text) { showToast('Add a thought first'); return; }
+
+  const node = {
+    id: Date.now().toString(),
+    text,
+    domains: [...selectedDomains],
+    instability: instabilityVal,
+    lock: document.getElementById('lockInput').value.trim(),
+    created: new Date().toISOString(),
+    connections: []
+  };
+
+  nodes.unshift(node);
+  save();
+
+  // Reset
+  document.getElementById('captureText').value = '';
+  document.getElementById('lockInput').value = '';
+  document.querySelectorAll('#domainChips .chip').forEach(c => c.classList.remove('selected'));
+  selectedDomains = [];
+  setInstability(4);
+
+  showToast('Captured →');
+}
+
+// ── Render nodes ───────────────────────────────────────────
+function filterBy(el, val) {
+  document.querySelectorAll('#filterRow .chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentFilter = val;
+  renderNodes();
+}
+
+function renderNodes() {
+  const list = document.getElementById('nodeList');
+  let filtered = currentFilter === 'all' ? nodes : nodes.filter(n => n.domains.includes(currentFilter));
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">No nodes yet.<br>Capture your first thought.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(n => {
+    const nodeEdges = edges.filter(e => e.a === n.id || e.b === n.id);
+    const connectedNodes = nodeEdges.map(e => {
+      const otherId = e.a === n.id ? e.b : e.a;
+      const other = nodes.find(x => x.id === otherId);
+      return other ? `<div class="conn-item" onclick="expandNodeById('${otherId}')"><span class="conn-arrow">→</span>${other.text.substring(0,40)}… <span style="color:var(--thorn);font-size:9px">[${e.type}]</span></div>` : '';
+    }).join('');
+
+    const domainTags = n.domains.map(d => `<span class="card-domain">${d}</span>`).join('');
+    const lockTags = n.lock ? n.lock.split(',').map(l => `<span class="lock-tag">${l.trim()}</span>`).join('') : '';
+    const dateStr = new Date(n.created).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+    return `
+    <div class="node-card" id="card-${n.id}" onclick="toggleCard('${n.id}')">
+      <div class="card-top">
+        <div style="flex:1">
+          ${domainTags ? `<div style="margin-bottom:6px;display:flex;gap:4px;flex-wrap:wrap">${domainTags}</div>` : ''}
+          <div class="card-text">${n.text}</div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <div class="instability-bar"><div class="instability-bar-fill" style="width:${n.instability*10}%"></div></div>
+        <span style="font-size:9px;color:var(--thorn)">${n.instability}</span>
+        <span class="card-date">${dateStr}</span>
+        ${nodeEdges.length > 0 ? `<span style="font-size:9px;color:var(--green)">${nodeEdges.length} links</span>` : ''}
+      </div>
+      <div class="card-expanded">
+        ${lockTags ? `<div style="margin-bottom:8px">${lockTags}</div>` : ''}
+        ${connectedNodes ? `<div class="connections-list">${connectedNodes}</div>` : ''}
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="ctx-btn" style="font-size:9px" onclick="event.stopPropagation();deleteNode('${n.id}')">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('expanded');
+}
+
+function expandNodeById(id) {
+  switchPanel('browse');
+  setTimeout(() => {
+    renderNodes();
+    const card = document.getElementById('card-' + id);
+    if (card) { card.classList.add('expanded'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }, 100);
+}
+
+function deleteNode(id) {
+  nodes = nodes.filter(n => n.id !== id);
+  edges = edges.filter(e => e.a !== id && e.b !== id);
+  save();
+  renderNodes();
+}
+
+// ── Connect panel ──────────────────────────────────────────
+function renderConnectPanel() {
+  const area = document.getElementById('mapArea');
+  connNodeA = null; connNodeB = null;
+  document.getElementById('connectionForm').style.display = 'none';
+
+  if (nodes.length === 0) {
+    area.innerHTML = '<div class="empty-state">Capture some nodes first</div>';
+  } else {
+    area.innerHTML = nodes.map(n => {
+      const label = (n.text.substring(0, 30) + (n.text.length > 30 ? '…' : ''));
+      const domStr = n.domains.length ? n.domains[0] : '';
+      return `<button class="connect-node" id="cn-${n.id}" onclick="selectConnNode('${n.id}')">
+        ${domStr ? `<span style="font-size:9px;color:var(--thorn)">${domStr}</span>` : ''}
+        <span>${label}</span>
+      </button>`;
+    }).join('');
+  }
+
+  renderEdges();
+}
+
+function selectConnNode(id) {
+  if (!connNodeA) {
+    connNodeA = id;
+    document.getElementById('cn-' + id).classList.add('selected-a');
+  } else if (!connNodeB && id !== connNodeA) {
+    connNodeB = id;
+    document.getElementById('cn-' + id).classList.add('selected-b');
+    document.getElementById('connectionForm').style.display = 'block';
+  } else {
+    // reset
+    document.querySelectorAll('.connect-node').forEach(n => n.classList.remove('selected-a','selected-b'));
+    connNodeA = id;
+    connNodeB = null;
+    document.getElementById('cn-' + id).classList.add('selected-a');
+    document.getElementById('connectionForm').style.display = 'none';
+  }
+}
+
+function selectConnType(el, val) {
+  document.querySelectorAll('.conn-type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  connTypeSelected = val;
+}
+
+function saveConnection() {
+  if (!connNodeA || !connNodeB) return;
+  // Check if already exists
+  const exists = edges.find(e => (e.a === connNodeA && e.b === connNodeB) || (e.a === connNodeB && e.b === connNodeA));
+  if (exists) { showToast('Connection already exists'); return; }
+
+  edges.push({ id: Date.now().toString(), a: connNodeA, b: connNodeB, type: connTypeSelected });
+  save();
+  showToast('Connection created');
+  renderConnectPanel();
+}
+
+function renderEdges() {
+  const list = document.getElementById('edgeList');
+  if (edges.length === 0) { list.innerHTML = ''; return; }
+  list.innerHTML = `<div class="section-label">Existing connections</div>` +
+    edges.map(e => {
+      const na = nodes.find(n => n.id === e.a);
+      const nb = nodes.find(n => n.id === e.b);
+      if (!na || !nb) return '';
+      return `<div class="edge-item">
+        <span class="edge-node">${na.text.substring(0,20)}…</span>
+        <span class="edge-arrow">→</span>
+        <span class="edge-type">${e.type}</span>
+        <span class="edge-arrow">→</span>
+        <span class="edge-node">${nb.text.substring(0,20)}…</span>
+      </div>`;
+    }).join('');
+}
+
+// ── Context builder ────────────────────────────────────────
+function buildContext(mode) {
+  let contextNodes = [];
+  if (mode === 'all') contextNodes = nodes;
+  if (mode === 'recent') contextNodes = nodes.slice(0, 10);
+  if (mode === 'spine') { renderSpineContext(); return; }
+
+  let out = SPINE + '\n\n---\n\nCAPTURED NODES (' + contextNodes.length + '):\n\n';
+  contextNodes.forEach((n, i) => {
+    const nodeEdges = edges.filter(e => e.a === n.id || e.b === n.id);
+    out += `[${i+1}] ${n.domains.join(', ') || 'General'}\n`;
+    out += `${n.text}\n`;
+    out += `Instability: ${n.instability}/10`;
+    if (n.lock) out += ` | Lock: ${n.lock}`;
+    out += '\n';
+    if (nodeEdges.length > 0) {
+      nodeEdges.forEach(e => {
+        const otherId = e.a === n.id ? e.b : e.a;
+        const other = nodes.find(x => x.id === otherId);
+        if (other) out += `  → ${e.type}: "${other.text.substring(0,40)}…"\n`;
+      });
+    }
+    out += '\n';
+  });
+
+  out += '---\nYou are now loaded with RiverThorn context. Continue building from here.';
+  document.getElementById('contextPreview').textContent = out;
+}
+
+function renderSpineContext() {
+  const out = SPINE + '\n\n---\nYou are now loaded with the RiverThorn framework spine. Continue building from here.';
+  document.getElementById('contextPreview').textContent = out;
+}
+
+function copyContext() {
+  const text = document.getElementById('contextPreview').textContent;
+  if (text.startsWith('Select a context')) { showToast('Generate context first'); return; }
+  navigator.clipboard.writeText(text).then(() => {
+    const flash = document.getElementById('copyFlash');
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Copied!');
+  });
+}
+
+function clearContext() {
+  document.getElementById('contextPreview').textContent = 'Select a context type above to generate your AI load package.';
+}
+
+// ── Toast ──────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ── Init ───────────────────────────────────────────────────
+updateCount();
+</script>
+</body>
+</html>
