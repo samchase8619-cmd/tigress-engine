@@ -1,31 +1,139 @@
 {
   "nodes": [
-    { "id": "The_Tree", "type": "GRAPH_NODE", "domain": "Riverthorn" },
-    { "id": "Cydne_Soraya", "type": "CHARACTER_FILE", "domain": "Riverthorn" },
-    { "id": "Goldharbor", "type": "LOCATION_FILE", "domain": "Riverthorn" },
-    { "id": "Stoneward", "type": "LOCATION_FILE", "domain": "Riverthorn" },
-    { "id": "Brightveil", "type": "LOCATION_FILE", "domain": "Riverthorn" },
-    { "id": "Ironreach", "type": "LOCATION_FILE", "domain": "Riverthorn" },
-    { "id": "Wolfgate", "type": "LOCATION_FILE", "domain": "Riverthorn" },
-    { "id": "schema_activation", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "background_knowledge", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "working_memory", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "reading_comprehension", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "narrative_reference_language", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "shared_cultural_memory", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "narrative_compression", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "meaning_emergence", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "narrative_signal_density", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "engagement_hooks", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "computational_story_structure", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "enlitrics_framework", "type": "KNOWLEDGE_OBJECT", "domain": "Research" },
-    { "id": "Stoneward_legitimacy_crisis", "type": "EVENT_TRIGGER", "domain": "Riverthorn" },
-    { "id": "Bridge_Opening_Attack", "type": "EVENT_RECORD", "domain": "Riverthorn" },
-    { "id": "Lioness_identity", "type": "NARRATIVE_OBJECT", "domain": "Riverthorn" },
-    { "id": "The_CEO", "type": "CHARACTER_FILE", "domain": "Riverthorn" },
-    { "id": "Corporate_consolidation", "type": "GRAPH_NODE", "domain": "Riverthorn" },
-    { "id": "Systemic_urban_breakdown", "type": "GRAPH_NODE", "domain": "Riverthorn" },
-    { "id": "Second_Form_Manifestation", "type": "EVENT_RECORD", "domain": "Riverthorn" },
-    { "id": "Male_Draconic_Form", "type": "NARRATIVE_OBJECT", "domain": "Riverthorn" }
+    {
+      "id": "The_Tree",
+      "type": "GRAPH_NODE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Cydne_Soraya",
+      "type": "CHARACTER_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Goldharbor",
+      "type": "LOCATION_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Stoneward",
+      "type": "LOCATION_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Brightveil",
+      "type": "LOCATION_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Ironreach",
+      "type": "LOCATION_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Wolfgate",
+      "type": "LOCATION_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "schema_activation",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "background_knowledge",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "working_memory",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "reading_comprehension",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "narrative_reference_language",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "shared_cultural_memory",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "narrative_compression",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "meaning_emergence",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "narrative_signal_density",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "engagement_hooks",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "computational_story_structure",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "enlitrics_framework",
+      "type": "KNOWLEDGE_OBJECT",
+      "domain": "Research"
+    },
+    {
+      "id": "Stoneward_legitimacy_crisis",
+      "type": "EVENT_TRIGGER",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Bridge_Opening_Attack",
+      "type": "EVENT_RECORD",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Lioness_identity",
+      "type": "NARRATIVE_OBJECT",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "The_CEO",
+      "type": "CHARACTER_FILE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Corporate_consolidation",
+      "type": "GRAPH_NODE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Systemic_urban_breakdown",
+      "type": "GRAPH_NODE",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Second_Form_Manifestation",
+      "type": "EVENT_RECORD",
+      "domain": "Riverthorn"
+    },
+    {
+      "id": "Male_Draconic_Form",
+      "type": "NARRATIVE_OBJECT",
+      "domain": "Riverthorn"
+    }
   ]
 }
