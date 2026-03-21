@@ -1,8 +1,32 @@
 {
   "artifacts": [
-    { "id": "SAVE_FILE_105", "title": "tigressos_application_code_layer", "artifact_type": "SAVE_FILE", "project": "TigressOS", "path": "data/artifacts/SAVE_FILE_105_tigressos_application_code_layer.json" },
-    { "id": "SAVE_FILE_106", "title": "tigressos_runtime_emulator", "artifact_type": "SAVE_FILE", "project": "TigressOS", "path": "data/artifacts/SAVE_FILE_106_tigressos_runtime_emulator.json" },
-    { "id": "SAVE_FILE_107", "title": "tigressos_save_registry", "artifact_type": "SAVE_FILE", "project": "TigressOS", "path": "data/artifacts/SAVE_FILE_107_tigressos_save_registry.json" },
-    { "id": "SAVE_FILE_114", "title": "Riverthorn Writers Room — Season 1 Initialization", "artifact_type": "SAVE_FILE", "project": "Riverthorn", "path": "data/artifacts/SAVE_FILE_114_riverthorn_season1_initialization.json" }
+    {
+      "id": "SAVE_FILE_105",
+      "title": "tigressos_application_code_layer",
+      "artifact_type": "SAVE_FILE",
+      "project": "TigressOS",
+      "path": "data/artifacts/SAVE_FILE_105_tigressos_application_code_layer.json"
+    },
+    {
+      "id": "SAVE_FILE_106",
+      "title": "tigressos_runtime_emulator",
+      "artifact_type": "SAVE_FILE",
+      "project": "TigressOS",
+      "path": "data/artifacts/SAVE_FILE_106_tigressos_runtime_emulator.json"
+    },
+    {
+      "id": "SAVE_FILE_107",
+      "title": "tigressos_save_registry",
+      "artifact_type": "SAVE_FILE",
+      "project": "TigressOS",
+      "path": "data/artifacts/SAVE_FILE_107_tigressos_save_registry.json"
+    },
+    {
+      "id": "SAVE_FILE_114",
+      "title": "Riverthorn Writers Room — Season 1 Initialization",
+      "artifact_type": "SAVE_FILE",
+      "project": "Riverthorn",
+      "path": "data/artifacts/SAVE_FILE_114_riverthorn_season1_initialization.json"
+    }
   ]
 }
