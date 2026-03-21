@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TigressOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #e0e0e0;
+      --muted: #666;
+      --accent: #7fff7f;
+      --warn: #ff9f43;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      color: var(--accent);
+      font-size: 1.4rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 0.3rem;
+      font-size: 0.85rem;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      max-width: 900px;
+    }
+
+    .nav-card {
+      display: block;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1.2rem 1.4rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.15s;
+    }
+
+    .nav-card:hover {
+      border-color: var(--accent);
+    }
+
+    .nav-card .label {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .nav-card .title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+    }
+
+    .nav-card .desc {
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TigressOS</h1>
+    <p>Workspace navigation</p>
+  </header>
+
+  <nav class="nav-grid">
+    <a class="nav-card" href="node-intake.html">
+      <div class="label">Riverthorn</div>
+      <div class="title">Node Intake</div>
+      <div class="desc">Parse RT_NODE log entries and sync them to the node registry via GitHub.</div>
+    </a>
+  </nav>
+</body>
+</html>
