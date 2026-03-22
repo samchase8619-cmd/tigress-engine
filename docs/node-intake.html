@@ -1,344 +1,754 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NODE INTAKE — TigressOS</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NODE INTAKE — TigressOS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Courier+Prime:wght@400;700&display=swap');
 
-    :root {
-      --bg: #0d0d0d;
-      --surface: #161616;
-      --border: #2a2a2a;
-      --text: #e0e0e0;
-      --muted: #666;
-      --accent: #7fff7f;
-      --warn: #ff9f43;
-      --error: #ff6b6b;
-    }
+  :root {
+    --green: #39ff14;
+    --green-dim: #1a7a08;
+    --green-muted: #2a5c18;
+    --bg: #080808;
+    --bg2: #0e0e0e;
+    --bg3: #141414;
+    --border: #1e3a10;
+    --text: #b8d4a8;
+    --text-dim: #5a7a4a;
+    --red: #ff3939;
+    --amber: #ffaa00;
+  }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 14px;
-      min-height: 100vh;
-      padding: 1.5rem 1rem;
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    h1 {
-      font-size: 1rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.25rem;
-    }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 0 0 60px 0;
+  }
 
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.78rem;
-      margin-bottom: 1.5rem;
-    }
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .back-link {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  .back-link:hover { color: var(--green); }
+  .header-title {
+    color: var(--green);
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+  .header-sub {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-left: auto;
+  }
 
-    label {
-      display: block;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-    }
+  /* TOKEN BAR */
+  .token-bar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .token-label { color: var(--text-dim); font-size: 11px; letter-spacing: 0.1em; white-space: nowrap; }
+  .token-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 6px 10px;
+    outline: none;
+    letter-spacing: 0.05em;
+  }
+  .token-input:focus { border-color: var(--green-dim); }
+  .btn-save {
+    background: transparent;
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 6px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-save:hover { background: var(--green-muted); }
+  .token-status { font-size: 11px; }
+  .token-status.ok { color: var(--green); }
+  .token-status.missing { color: var(--text-dim); }
 
-    input[type="password"],
-    textarea {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.85rem;
-      padding: 0.6rem 0.75rem;
-      border-radius: 3px;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.15s;
-    }
+  /* MAIN */
+  .main { padding: 20px; max-width: 680px; }
 
-    input[type="password"]:focus,
-    textarea:focus {
-      border-color: #444;
-    }
+  /* SECTION LABEL */
+  .section-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    margin-top: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+  }
+  .section-label:first-child { margin-top: 0; }
 
-    .token-row {
-      display: flex;
-      gap: 0.5rem;
-      align-items: flex-end;
-      margin-bottom: 1.25rem;
-    }
+  /* NODE ID ROW */
+  .node-id-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .node-id-prefix {
+    color: var(--green);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+  .node-id-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 6px 10px;
+    width: 80px;
+    outline: none;
+    letter-spacing: 0.1em;
+  }
+  .node-id-input:focus { border-color: var(--green); }
+  .node-id-hint { color: var(--text-dim); font-size: 11px; }
 
-    .token-row > div { flex: 1; }
+  /* FIELD ROWS */
+  .field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+  .field-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+  }
+  .field-input, .field-select, .field-textarea {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 8px 10px;
+    outline: none;
+    width: 100%;
+    letter-spacing: 0.04em;
+  }
+  .field-input:focus, .field-select:focus, .field-textarea:focus {
+    border-color: var(--green-dim);
+  }
+  .field-select option { background: var(--bg3); }
+  .field-textarea { resize: vertical; min-height: 56px; }
 
-    button {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.6rem 1rem;
-      border-radius: 3px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: border-color 0.15s, color 0.15s;
-    }
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-    button:hover { border-color: #555; color: #fff; }
+  /* SLIDERS */
+  .slider-row {
+    margin-bottom: 14px;
+  }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .slider-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+  }
+  .slider-value {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    min-width: 28px;
+    text-align: right;
+  }
+  .slider-value.i-val { color: var(--red); }
+  .slider-value.l-val { color: var(--amber); }
 
-    #syncBtn {
-      width: 100%;
-      margin-top: 0.75rem;
-      padding: 0.8rem;
-      font-size: 0.9rem;
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+  .slider-track {
+    position: relative;
+    height: 28px;
+    display: flex;
+    align-items: center;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"].i-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right, var(--green-muted), var(--red));
+    border-radius: 0;
+  }
+  input[type="range"].l-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right, var(--green-muted), var(--amber));
+    border-radius: 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--green);
+    border: 2px solid var(--bg);
+    border-radius: 0;
+    cursor: pointer;
+    margin-top: -6px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--green);
+    border: 2px solid var(--bg);
+    border-radius: 0;
+    cursor: pointer;
+  }
+  .slider-pips {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+  .slider-pips span {
+    color: var(--text-dim);
+    font-size: 9px;
+    width: 10px;
+    text-align: center;
+  }
 
-    #syncBtn:hover { background: #0f1f0f; }
-    #syncBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* PREVIEW */
+  .preview-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    margin-top: 20px;
+    margin-bottom: 6px;
+    word-break: break-all;
+    line-height: 1.8;
+    font-size: 12px;
+    color: var(--green);
+    letter-spacing: 0.03em;
+    min-height: 52px;
+  }
+  .preview-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
 
-    textarea { min-height: 180px; }
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    padding: 14px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--green-muted); }
+  .btn.primary {
+    border-color: var(--green);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .btn.secondary { color: var(--text-dim); border-color: var(--border); }
+  .btn.secondary:hover { color: var(--text); background: var(--bg3); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    .section { margin-bottom: 1.25rem; }
+  /* STATUS */
+  .status-line {
+    margin-top: 12px;
+    font-size: 11px;
+    min-height: 18px;
+    letter-spacing: 0.05em;
+  }
+  .status-line.ok { color: var(--green); }
+  .status-line.err { color: var(--red); }
+  .status-line.info { color: var(--text-dim); }
 
-    #results {
-      display: none;
-      margin-top: 1.25rem;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 1rem;
-      background: var(--surface);
-    }
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0 0;
+  }
 
-    .results-title {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-    }
+  /* PULL SECTION */
+  .pull-section { margin-top: 0; }
 
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.25rem 0;
-      border-bottom: 1px solid var(--border);
-    }
+  .node-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .node-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green-dim);
+    padding: 10px 12px;
+    font-size: 11px;
+    color: var(--text);
+    cursor: pointer;
+    line-height: 1.7;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .node-item:hover {
+    border-left-color: var(--green);
+    background: var(--bg3);
+  }
+  .node-item .node-num { color: var(--green); font-weight: 700; font-size: 12px; }
+  .node-item .node-thought { color: var(--text); margin-top: 2px; }
+  .node-item .node-meta { color: var(--text-dim); margin-top: 2px; font-size: 10px; }
 
-    .stat-row:last-of-type { border-bottom: none; }
+  .node-count {
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+  }
 
-    .stat-label { color: var(--muted); }
+  /* FLASH */
+  @keyframes flash {
+    0% { background: var(--green-muted); }
+    100% { background: transparent; }
+  }
+  .flash { animation: flash 0.4s ease-out; }
 
-    .stat-value { font-weight: bold; }
-
-    .stat-value.pushed { color: var(--accent); }
-    .stat-value.skipped { color: var(--warn); }
-    .stat-value.total { color: var(--text); }
-
-    #status {
-      margin-top: 0.75rem;
-      font-size: 0.82rem;
-      min-height: 1.2em;
-    }
-
-    .ok { color: var(--accent); }
-    .err { color: var(--error); }
-    .info { color: var(--muted); }
-
-    .hint {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-top: 0.35rem;
-      line-height: 1.5;
-    }
-  </style>
+  /* MOBILE */
+  @media (max-width: 480px) {
+    .two-col { grid-template-columns: 1fr; }
+    .btn-row { flex-direction: column; }
+    .main { padding: 16px; }
+  }
+</style>
 </head>
 <body>
 
-  <a href="index.html" style="display:inline-block;margin-bottom:1.2rem;font-size:0.8rem;color:var(--muted);text-decoration:none;letter-spacing:0.08em;">← TigressOS</a>
+<div class="header">
+  <a class="back-link" href="index.html">← TigressOS</a>
+  <span class="header-title">NODE INTAKE</span>
+  <span class="header-sub">TigressOS / Riverthorn sync utility</span>
+</div>
 
-  <h1>NODE INTAKE</h1>
-  <p class="subtitle">TigressOS / Riverthorn sync utility</p>
+<div class="token-bar">
+  <span class="token-label">GITHUB TOKEN</span>
+  <input class="token-input" id="tokenInput" type="password" placeholder="ghp_..." autocomplete="off" spellcheck="false">
+  <button class="btn-save" onclick="saveToken()">SAVE</button>
+  <span class="token-status missing" id="tokenStatus">—</span>
+</div>
 
-  <div class="section token-row">
-    <div>
-      <label for="token">GitHub Token</label>
-      <input type="password" id="token" placeholder="ghp_..." autocomplete="off">
-    </div>
-    <button id="saveTokenBtn">Save</button>
-  </div>
-  <p class="hint" style="margin-top:-0.9rem; margin-bottom:1.25rem;">
-    Fine-grained PAT with <strong>Contents: Read &amp; Write</strong> on this repo only. Stored in localStorage.
-  </p>
+<div class="main">
 
-  <div class="section">
-    <label for="logInput">Paste LOG</label>
-    <textarea id="logInput" placeholder="RT_NODE_### | Domain | System Type | Thought | I:# L:# | Lock: description | Mechanism | tag1, tag2"></textarea>
-    <p class="hint">Paste full log output. Non-matching lines are ignored.</p>
-  </div>
-
-  <button id="syncBtn">SYNC</button>
-
-  <div id="status" class="info"></div>
-
-  <div id="results">
-    <div class="results-title">Sync Report</div>
-    <div class="stat-row">
-      <span class="stat-label">Pushed</span>
-      <span class="stat-value pushed" id="rPushed">—</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Skipped</span>
-      <span class="stat-value skipped" id="rSkipped">—</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Total nodes</span>
-      <span class="stat-value total" id="rTotal">—</span>
-    </div>
+  <!-- NODE ID -->
+  <div class="section-label">NODE ID</div>
+  <div class="node-id-row">
+    <span class="node-id-prefix">RT_NODE_</span>
+    <input class="node-id-input" id="nodeId" type="text" value="022" maxlength="6" spellcheck="false">
+    <span class="node-id-hint">auto-set on pull · override manually</span>
   </div>
 
-  <script>
-    const REPO   = 'samchase8619-cmd/tigress-engine';
-    const BRANCH = 'master';
-    const FILE   = 'data/nodes.json';
-    const API    = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+  <!-- CLASSIFICATION -->
+  <div class="section-label">CLASSIFICATION</div>
+  <div class="two-col">
+    <div class="field-row">
+      <label class="field-label">DOMAIN</label>
+      <select class="field-select" id="domain">
+        <option value="">— select —</option>
+        <option>Framework</option>
+        <option>Character</option>
+        <option>World</option>
+        <option>Paper</option>
+        <option>System</option>
+        <option>Narrative</option>
+        <option>Identity</option>
+        <option>Pressure</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label class="field-label">SYSTEM TYPE</label>
+      <select class="field-select" id="systemType">
+        <option value="">— select —</option>
+        <option>Insight</option>
+        <option>Distinction</option>
+        <option>Tension</option>
+        <option>Shift</option>
+        <option>Question</option>
+        <option>Moment</option>
+        <option>Pattern</option>
+      </select>
+    </div>
+  </div>
 
-    // RT_NODE_### | Domain | System Type | Thought | I:x L:y | Lock: desc | Mechanism | tags
-    // "Lock: " prefix is optional
-    const NODE_RE = /^(RT_NODE_\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*I:(\d+)\s+L:(\d+)\s*\|\s*(?:Lock:\s*)?([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*(.+)$/;
+  <!-- THOUGHT -->
+  <div class="section-label">CONTENT</div>
+  <div class="field-row">
+    <label class="field-label">THOUGHT</label>
+    <textarea class="field-textarea" id="thought" placeholder="The core insight, tension, or moment..." rows="3"></textarea>
+  </div>
 
-    const $ = id => document.getElementById(id);
+  <!-- SLIDERS -->
+  <div class="section-label">I / L STATE AT CAPTURE</div>
 
-    // Restore saved token
-    const saved = localStorage.getItem('rt_ghtoken');
-    if (saved) $('token').value = saved;
+  <div class="slider-row">
+    <div class="slider-header">
+      <span class="slider-label">I — INSTABILITY</span>
+      <span class="slider-value i-val" id="iDisplay">5</span>
+    </div>
+    <input type="range" class="i-slider" id="iSlider" min="0" max="10" value="5"
+      oninput="document.getElementById('iDisplay').textContent = this.value; updatePreview()">
+    <div class="slider-pips">
+      <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+      <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+    </div>
+  </div>
 
-    $('saveTokenBtn').addEventListener('click', () => {
-      const t = $('token').value.trim();
-      if (!t) return;
-      localStorage.setItem('rt_ghtoken', t);
-      setStatus('Token saved.', 'ok');
-    });
+  <div class="slider-row">
+    <div class="slider-header">
+      <span class="slider-label">L — LOCK</span>
+      <span class="slider-value l-val" id="lDisplay">5</span>
+    </div>
+    <input type="range" class="l-slider" id="lSlider" min="0" max="10" value="5"
+      oninput="document.getElementById('lDisplay').textContent = this.value; updatePreview()">
+    <div class="slider-pips">
+      <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+      <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+    </div>
+  </div>
 
-    function parseLog(text) {
-      const nodes = [];
-      for (const raw of text.split('\n')) {
-        const line = raw.trim();
-        if (!line || line.startsWith('#')) continue;
-        const m = line.match(NODE_RE);
-        if (!m) continue;
-        const [, id, domain, system_type, thought, iStr, lStr, lock_point, mechanism, tagsRaw] = m;
-        nodes.push({
-          id: id.trim(),
-          domain: domain.trim(),
-          system_type: system_type.trim(),
-          thought: thought.trim(),
-          I: parseInt(iStr, 10),
-          L: parseInt(lStr, 10),
-          lock_point: lock_point.trim(),
-          mechanism: mechanism.trim(),
-          tags: tagsRaw.split(',').map(t => t.trim()).filter(Boolean),
-        });
-      }
-      return nodes;
-    }
+  <!-- LOCK POINT + MECHANISM -->
+  <div class="two-col">
+    <div class="field-row">
+      <label class="field-label">LOCK POINT</label>
+      <input class="field-input" id="lockPoint" type="text" placeholder="one stabilizing phrase">
+    </div>
+    <div class="field-row">
+      <label class="field-label">MECHANISM</label>
+      <select class="field-select" id="mechanism">
+        <option value="">— select —</option>
+        <option>Adaptation Failure</option>
+        <option>Pressure Accumulation</option>
+        <option>Constraint Overload</option>
+        <option>Displacement</option>
+        <option>Signal Distortion</option>
+      </select>
+    </div>
+  </div>
 
-    function setStatus(msg, cls = 'info') {
-      const el = $('status');
-      el.textContent = msg;
-      el.className = cls;
-    }
+  <!-- TAGS -->
+  <div class="two-col">
+    <div class="field-row">
+      <label class="field-label">TAG 1</label>
+      <input class="field-input" id="tag1" type="text" placeholder="e.g. framework">
+    </div>
+    <div class="field-row">
+      <label class="field-label">TAG 2</label>
+      <input class="field-input" id="tag2" type="text" placeholder="e.g. paper">
+    </div>
+  </div>
 
-    async function ghGet(token) {
-      const res = await fetch(`${API}?ref=${BRANCH}`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
-      });
-      if (!res.ok) throw new Error(`GitHub GET failed: ${res.status} ${res.statusText}`);
-      return res.json();
-    }
+  <!-- PREVIEW -->
+  <div class="preview-label">PREVIEW</div>
+  <div class="preview-box" id="preview">RT_NODE_022 | — | — | — | I:5 L:5 | — | — | —</div>
 
-    async function ghPut(token, content, sha, message) {
-      const res = await fetch(API, {
+  <!-- SYNC BUTTON -->
+  <div class="btn-row">
+    <button class="btn primary" id="syncBtn" onclick="syncNode()">SYNC TO REPO</button>
+    <button class="btn secondary" onclick="clearForm()">CLEAR</button>
+  </div>
+  <div class="status-line info" id="syncStatus"></div>
+
+  <!-- DIVIDER -->
+  <hr class="divider">
+
+  <!-- PULL SECTION -->
+  <div class="pull-section">
+    <div class="section-label">PULL FROM REPO</div>
+    <div class="btn-row">
+      <button class="btn" id="pullBtn" onclick="pullNodes()">PULL NODE LOG</button>
+    </div>
+    <div class="status-line info" id="pullStatus"></div>
+    <div class="node-count" id="nodeCount"></div>
+    <div class="node-list" id="nodeList"></div>
+  </div>
+
+</div>
+
+<script>
+const OWNER = 'samchase8619-cmd';
+const REPO  = 'tigress-engine';
+const PATH  = 'RIVERTHORN_LOG.md';
+const BRANCH = 'main';
+
+// ── TOKEN ────────────────────────────────────────────────────────
+function loadToken() {
+  const t = localStorage.getItem('tigress_pat') || '';
+  if (t) {
+    document.getElementById('tokenInput').value = t;
+    document.getElementById('tokenStatus').textContent = '● saved';
+    document.getElementById('tokenStatus').className = 'token-status ok';
+  }
+}
+
+function saveToken() {
+  const val = document.getElementById('tokenInput').value.trim();
+  if (!val) return;
+  localStorage.setItem('tigress_pat', val);
+  const s = document.getElementById('tokenStatus');
+  s.textContent = '● saved';
+  s.className = 'token-status ok';
+}
+
+function getToken() {
+  return localStorage.getItem('tigress_pat') || document.getElementById('tokenInput').value.trim();
+}
+
+// ── PREVIEW ──────────────────────────────────────────────────────
+function v(id) { return document.getElementById(id).value.trim(); }
+
+function buildNodeLine() {
+  const id   = 'RT_NODE_' + v('nodeId').padStart(3,'0');
+  const dom  = v('domain')     || '—';
+  const sys  = v('systemType') || '—';
+  const th   = v('thought')    || '—';
+  const iVal = document.getElementById('iSlider').value;
+  const lVal = document.getElementById('lSlider').value;
+  const lp   = v('lockPoint')  || '—';
+  const mech = v('mechanism')  || '—';
+  const t1   = v('tag1') || '—';
+  const t2   = v('tag2') || '—';
+  return `${id} | ${dom} | ${sys} | ${th} | I:${iVal} L:${lVal} | ${lp} | ${mech} | ${t1}, ${t2}`;
+}
+
+function updatePreview() {
+  document.getElementById('preview').textContent = buildNodeLine();
+}
+
+// attach live update to all inputs
+document.addEventListener('DOMContentLoaded', () => {
+  loadToken();
+  const ids = ['nodeId','domain','systemType','thought','lockPoint','mechanism','tag1','tag2'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+  });
+  updatePreview();
+});
+
+// ── CLEAR ────────────────────────────────────────────────────────
+function clearForm() {
+  ['domain','systemType','thought','lockPoint','mechanism','tag1','tag2'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('iSlider').value = 5;
+  document.getElementById('lSlider').value = 5;
+  document.getElementById('iDisplay').textContent = '5';
+  document.getElementById('lDisplay').textContent = '5';
+  updatePreview();
+  document.getElementById('syncStatus').textContent = '';
+}
+
+// ── SYNC ─────────────────────────────────────────────────────────
+async function syncNode() {
+  const token = getToken();
+  if (!token) { setStatus('syncStatus','err','No token saved.'); return; }
+
+  const thought = v('thought');
+  if (!thought) { setStatus('syncStatus','err','Thought is required.'); return; }
+  if (!v('domain'))     { setStatus('syncStatus','err','Domain is required.'); return; }
+  if (!v('systemType')){ setStatus('syncStatus','err','System Type is required.'); return; }
+  if (!v('mechanism'))  { setStatus('syncStatus','err','Mechanism is required.'); return; }
+
+  const btn = document.getElementById('syncBtn');
+  btn.disabled = true;
+  setStatus('syncStatus','info','Fetching current file…');
+
+  try {
+    const fileRes = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}?ref=${BRANCH}`,
+      { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+    );
+    if (!fileRes.ok) throw new Error(`GitHub ${fileRes.status}: ${fileRes.statusText}`);
+    const fileData = await fileRes.json();
+
+    const decoded = atob(fileData.content.replace(/\n/g,''));
+    const newLine = buildNodeLine();
+    const updated = decoded + '\n' + newLine + '\n';
+    const encoded = btoa(unescape(encodeURIComponent(updated)));
+
+    setStatus('syncStatus','info','Pushing node…');
+
+    const putRes = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`,
+      {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json',
+          Accept: 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message, content: btoa(content), sha, branch: BRANCH }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(`GitHub PUT failed: ${res.status} — ${err.message || res.statusText}`);
+        body: JSON.stringify({
+          message: `node: add ${newLine.split('|')[0].trim()}`,
+          content: encoded,
+          sha: fileData.sha,
+          branch: BRANCH
+        })
       }
-      return res.json();
+    );
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || putRes.statusText);
     }
 
-    $('syncBtn').addEventListener('click', async () => {
-      const token = $('token').value.trim();
-      if (!token) { setStatus('Enter a GitHub token first.', 'err'); return; }
+    // increment node id
+    const cur = parseInt(v('nodeId'), 10) || 22;
+    document.getElementById('nodeId').value = String(cur + 1).padStart(3,'0');
+    updatePreview();
 
-      const logText = $('logInput').value;
-      const incoming = parseLog(logText);
-      if (incoming.length === 0) {
-        setStatus('No RT_NODE lines found in pasted text.', 'err');
-        return;
-      }
+    document.getElementById('preview').classList.add('flash');
+    setTimeout(() => document.getElementById('preview').classList.remove('flash'), 500);
+    setStatus('syncStatus','ok',`✓ synced — ${newLine.split('|')[0].trim()}`);
 
-      $('syncBtn').disabled = true;
-      $('results').style.display = 'none';
-      setStatus(`Parsed ${incoming.length} node(s). Fetching store…`, 'info');
+  } catch(e) {
+    setStatus('syncStatus','err', 'Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
 
-      try {
-        // 1. Fetch current nodes.json
-        const file = await ghGet(token);
-        const existing = JSON.parse(atob(file.content));
-        const existingIds = new Set(existing.nodes.map(n => n.id));
+// ── PULL ─────────────────────────────────────────────────────────
+async function pullNodes() {
+  const token = getToken();
+  if (!token) { setStatus('pullStatus','err','No token saved.'); return; }
 
-        // 2. Merge
-        let pushed = 0, skipped = 0;
-        for (const node of incoming) {
-          if (existingIds.has(node.id)) { skipped++; }
-          else { existing.nodes.push(node); existingIds.add(node.id); pushed++; }
-        }
+  const btn = document.getElementById('pullBtn');
+  btn.disabled = true;
+  setStatus('pullStatus','info','Fetching log…');
 
-        if (pushed === 0) {
-          setStatus(`Nothing new — all ${skipped} node(s) already stored.`, 'info');
-          $('rPushed').textContent = 0;
-          $('rSkipped').textContent = skipped;
-          $('rTotal').textContent = existing.nodes.length;
-          $('results').style.display = 'block';
-          return;
-        }
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}?ref=${BRANCH}`,
+      { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+    );
+    if (!res.ok) throw new Error(`GitHub ${res.status}: ${res.statusText}`);
+    const data = await res.json();
+    const content = atob(data.content.replace(/\n/g,''));
 
-        // 3. Commit
-        setStatus(`Pushing ${pushed} new node(s)…`, 'info');
-        const newContent = JSON.stringify(existing, null, 2) + '\n';
-        await ghPut(token, newContent, file.sha, `Add ${pushed} Riverthorn node(s) via node-intake`);
+    // parse RT_NODE lines
+    const lines = content.split('\n');
+    const nodes = lines.filter(l => /^RT_NODE_\d+\s*\|/.test(l.trim()));
 
-        $('rPushed').textContent = pushed;
-        $('rSkipped').textContent = skipped;
-        $('rTotal').textContent = existing.nodes.length;
-        $('results').style.display = 'block';
-        setStatus(`Done. ${pushed} node(s) committed to ${BRANCH}.`, 'ok');
+    if (nodes.length === 0) {
+      setStatus('pullStatus','info','No RT_NODE entries found.');
+      document.getElementById('nodeCount').textContent = '';
+      document.getElementById('nodeList').innerHTML = '';
+      return;
+    }
 
-      } catch (err) {
-        setStatus(err.message, 'err');
-      } finally {
-        $('syncBtn').disabled = false;
-      }
+    // set next node id
+    const nums = nodes.map(n => {
+      const m = n.match(/RT_NODE_(\d+)/);
+      return m ? parseInt(m[1],10) : 0;
     });
-  </script>
+    const maxNum = Math.max(...nums);
+    document.getElementById('nodeId').value = String(maxNum + 1).padStart(3,'0');
+    updatePreview();
+
+    setStatus('pullStatus','ok', `✓ pulled — ${nodes.length} nodes found`);
+    document.getElementById('nodeCount').textContent = `showing ${nodes.length} nodes · next: RT_NODE_${String(maxNum+1).padStart(3,'0')}`;
+
+    // render
+    const list = document.getElementById('nodeList');
+    list.innerHTML = '';
+    // show newest first
+    [...nodes].reverse().forEach(line => {
+      const parts = line.split('|').map(p => p.trim());
+      const num   = parts[0] || '';
+      const dom   = parts[1] || '';
+      const sys   = parts[2] || '';
+      const th    = parts[3] || '';
+      const il    = parts[4] || '';
+      const mech  = parts[6] || '';
+
+      const div = document.createElement('div');
+      div.className = 'node-item';
+      div.innerHTML = `
+        <div class="node-num">${num}</div>
+        <div class="node-thought">${th}</div>
+        <div class="node-meta">${dom} · ${sys} · ${il} · ${mech}</div>
+      `;
+      list.appendChild(div);
+    });
+
+  } catch(e) {
+    setStatus('pullStatus','err','Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── UTIL ─────────────────────────────────────────────────────────
+function setStatus(id, cls, msg) {
+  const el = document.getElementById(id);
+  el.className = 'status-line ' + cls;
+  el.textContent = msg;
+}
+</script>
 </body>
 </html>
