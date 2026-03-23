@@ -1,104 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TigressOS</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RiverThorn</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --thorn: #c8a96e;
+    --deep: #0d1f29;
+    --text: #e8dcc8;
+    --muted: #8a9ba8;
+    --danger: #c86e6e;
+    --green: #6ec8a0;
+    --card-bg: rgba(22,40,56,0.9);
+    --border: rgba(200,169,110,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--deep); color:var(--text); font-family:'DM Mono',monospace; font-size:13px; min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%, rgba(200,169,110,0.06) 0%, transparent 60%); pointer-events:none; z-index:0; }
+  #app { position:relative; z-index:1; max-width:480px; margin:0 auto; padding-bottom:90px; }
 
-    :root {
-      --bg: #0d0d0d;
-      --surface: #161616;
-      --border: #2a2a2a;
-      --text: #e0e0e0;
-      --muted: #666;
-      --accent: #7fff7f;
-      --warn: #ff9f43;
-    }
+  .header { padding:44px 24px 16px; position:relative; }
+  .header-logo { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:300; letter-spacing:0.15em; }
+  .header-logo span { color:var(--thorn); }
+  .header-sub { font-size:9px; color:var(--muted); letter-spacing:0.2em; text-transform:uppercase; margin-top:3px; }
+  .header-right { position:absolute; right:24px; top:48px; text-align:right; }
+  .next-id { font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--thorn); line-height:1; }
+  .next-id-label { font-size:8px; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 14px;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
+  .nav { display:flex; padding:0 24px; gap:4px; margin-bottom:20px; }
+  .nav-btn { flex:1; padding:7px 2px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border-radius:2px; }
+  .nav-btn.active { background:rgba(200,169,110,0.1); border-color:var(--thorn); color:var(--thorn); }
 
-    header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
-    }
+  .panel { display:none; padding:0 24px; }
+  .panel.active { display:block; animation:fadeIn 0.2s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
 
-    header h1 {
-      color: var(--accent);
-      font-size: 1.4rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-    }
+  .lbl { font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; margin-top:14px; display:flex; align-items:center; gap:8px; }
+  .lbl::after { content:''; flex:1; height:1px; background:var(--border); }
+  .req::before { content:'* '; color:var(--thorn); }
 
-    header p {
-      color: var(--muted);
-      margin-top: 0.3rem;
-      font-size: 0.85rem;
-    }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:4px; }
+  .chip { padding:5px 10px; border:1px solid var(--border); border-radius:20px; font-size:10px; color:var(--muted); cursor:pointer; transition:all 0.15s; background:transparent; font-family:'DM Mono',monospace; letter-spacing:0.05em; }
+  .chip.selected { background:rgba(200,169,110,0.12); border-color:var(--thorn); color:var(--thorn); }
 
-    .nav-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1rem;
-      max-width: 900px;
-    }
+  .thought-box { width:100%; min-height:120px; background:var(--card-bg); border:1px solid var(--border); border-radius:4px; padding:12px; color:var(--text); font-family:'Cormorant Garamond',serif; font-size:16px; line-height:1.6; resize:none; outline:none; transition:border-color 0.2s; }
+  .thought-box:focus { border-color:rgba(200,169,110,0.5); }
+  .thought-box::placeholder { color:var(--muted); font-style:italic; }
 
-    .nav-card {
-      display: block;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      padding: 1.2rem 1.4rem;
-      text-decoration: none;
-      color: var(--text);
-      transition: border-color 0.15s;
-    }
+  .text-input { width:100%; background:var(--card-bg); border:1px solid var(--border); border-radius:3px; padding:9px 11px; color:var(--text); font-family:'DM Mono',monospace; font-size:11px; outline:none; transition:border-color 0.2s; }
+  .text-input:focus { border-color:rgba(200,169,110,0.4); }
+  .text-input::placeholder { color:var(--muted); }
 
-    .nav-card:hover {
-      border-color: var(--accent);
-    }
+  .slider-row { display:flex; align-items:center; gap:10px; margin:4px 0; }
+  .slider-label { font-size:9px; color:var(--muted); width:60px; }
+  .slider-track { flex:1; height:3px; background:rgba(200,169,110,0.12); border-radius:2px; position:relative; cursor:pointer; }
+  .slider-fill { height:100%; border-radius:2px; transition:width 0.08s; }
+  .i-fill { background:linear-gradient(90deg,var(--green),var(--thorn),var(--danger)); }
+  .l-fill { background:linear-gradient(90deg,var(--thorn),#1a3a4a); }
+  .slider-thumb { position:absolute; top:50%; transform:translate(-50%,-50%); width:13px; height:13px; border-radius:50%; background:var(--thorn); cursor:grab; box-shadow:0 0 8px rgba(200,169,110,0.35); transition:left 0.06s; }
+  .slider-val { font-size:12px; color:var(--thorn); width:18px; text-align:right; }
 
-    .nav-card .label {
-      color: var(--accent);
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 0.4rem;
-    }
+  .node-id-preview { font-family:'DM Mono',monospace; font-size:11px; color:var(--thorn); background:rgba(200,169,110,0.08); border:1px solid var(--border); border-radius:3px; padding:7px 11px; margin-bottom:4px; letter-spacing:0.08em; }
 
-    .nav-card .title {
-      font-size: 1rem;
-      font-weight: bold;
-      margin-bottom: 0.4rem;
-    }
+  .btn-save { width:100%; padding:13px; margin-top:16px; background:linear-gradient(135deg,rgba(200,169,110,0.15),rgba(200,169,110,0.07)); border:1px solid rgba(200,169,110,0.4); border-radius:3px; color:var(--thorn); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+  .btn-save:active { transform:scale(0.98); }
 
-    .nav-card .desc {
-      color: var(--muted);
-      font-size: 0.8rem;
-      line-height: 1.5;
-    }
-  </style>
+  .filter-row { display:flex; gap:5px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; }
+  .filter-row::-webkit-scrollbar { display:none; }
+
+  .node-card { background:var(--card-bg); border:1px solid var(--border); border-radius:4px; padding:13px; margin-bottom:9px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+  .node-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--thorn); opacity:0; transition:opacity 0.2s; }
+  .node-card.expanded::before { opacity:1; }
+  .card-id { font-size:9px; color:var(--thorn); letter-spacing:0.12em; margin-bottom:5px; }
+  .card-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:7px; }
+  .tag { font-size:8px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 6px; border-radius:8px; }
+  .t-domain { background:rgba(200,169,110,0.12); color:var(--thorn); }
+  .t-sys { background:rgba(110,200,160,0.1); color:var(--green); }
+  .t-mech { background:rgba(200,110,110,0.1); color:#e8a0a0; }
+  .t-pat { background:rgba(138,155,168,0.1); color:var(--muted); }
+  .card-thought { font-family:'Cormorant Garamond',serif; font-size:15px; line-height:1.5; }
+  .card-state { display:flex; gap:8px; margin-top:9px; align-items:center; }
+  .state-bar { flex:1; height:2px; background:rgba(255,255,255,0.06); border-radius:1px; overflow:hidden; }
+  .state-bar-fill { height:100%; border-radius:1px; }
+  .card-expanded { display:none; margin-top:11px; padding-top:11px; border-top:1px solid var(--border); }
+  .node-card.expanded .card-expanded { display:block; }
+
+  .map-area { background:var(--card-bg); border:1px solid var(--border); border-radius:4px; padding:14px; margin-bottom:14px; min-height:140px; }
+  .conn-node { display:inline-flex; align-items:center; gap:5px; padding:5px 10px; border:1px solid var(--border); border-radius:20px; margin:3px; font-size:10px; cursor:pointer; transition:all 0.2s; background:rgba(200,169,110,0.04); }
+  .conn-node.sel-a { background:rgba(200,169,110,0.18); border-color:var(--thorn); color:var(--thorn); }
+  .conn-node.sel-b { background:rgba(110,200,160,0.12); border-color:var(--green); color:var(--green); }
+  .conn-types { display:flex; gap:5px; flex-wrap:wrap; margin:10px 0; }
+  .conn-type { padding:5px 9px; background:transparent; border:1px solid var(--border); border-radius:3px; color:var(--muted); font-family:'DM Mono',monospace; font-size:9px; cursor:pointer; transition:all 0.15s; }
+  .conn-type.active { background:rgba(200,169,110,0.1); border-color:var(--thorn); color:var(--thorn); }
+  .edge-item { display:flex; align-items:center; gap:6px; padding:7px 9px; background:var(--card-bg); border:1px solid var(--border); border-radius:3px; margin-bottom:5px; font-size:10px; }
+  .edge-type { font-size:8px; color:var(--thorn); letter-spacing:0.1em; text-transform:uppercase; background:rgba(200,169,110,0.1); padding:2px 5px; border-radius:6px; }
+
+  .ctx-preview { background:var(--card-bg); border:1px solid var(--border); border-radius:4px; padding:13px; margin-bottom:12px; font-family:'Cormorant Garamond',serif; font-size:13px; line-height:1.7; max-height:280px; overflow-y:auto; white-space:pre-wrap; }
+  .ctx-preview::-webkit-scrollbar { width:3px; }
+  .ctx-preview::-webkit-scrollbar-thumb { background:rgba(200,169,110,0.3); border-radius:2px; }
+  .ctx-btns { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .ctx-btn { flex:1; min-width:90px; padding:9px 6px; background:transparent; border:1px solid var(--border); border-radius:3px; color:var(--muted); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.08em; cursor:pointer; transition:all 0.2s; text-align:center; }
+  .ctx-btn.primary { border-color:var(--thorn); color:var(--thorn); background:rgba(200,169,110,0.07); }
+  .ctx-btn:active { transform:scale(0.97); }
+
+  .bottom-nav { position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto; display:flex; background:rgba(13,31,41,0.96); backdrop-filter:blur(12px); border-top:1px solid var(--border); z-index:50; }
+  .bnav-btn { flex:1; padding:11px 4px 15px; background:transparent; border:none; color:var(--muted); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; transition:color 0.2s; font-family:'DM Mono',monospace; font-size:8px; letter-spacing:0.08em; text-transform:uppercase; }
+  .bnav-btn.active { color:var(--thorn); }
+  .bnav-btn svg { width:18px; height:18px; }
+
+  .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--thorn); color:var(--deep); padding:9px 18px; border-radius:20px; font-size:11px; letter-spacing:0.1em; font-family:'DM Mono',monospace; z-index:200; opacity:0; transition:opacity 0.3s; pointer-events:none; white-space:nowrap; }
+  .toast.show { opacity:1; }
+  .empty { text-align:center; padding:36px 16px; color:var(--muted); font-family:'Cormorant Garamond',serif; font-size:15px; font-style:italic; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>TigressOS</h1>
-    <p>Workspace navigation</p>
-  </header>
+<div id="app">
+  <div class="header">
+    <div class="header-logo">River<span>Thorn</span></div>
+    <div class="header-sub">coherence under instability</div>
+    <div class="header-right">
+      <div class="next-id" id="nextIdDisplay">001</div>
+      <div class="next-id-label">next node</div>
+    </div>
+  </div>
 
-  <nav class="nav-grid">
-    <a class="nav-card" href="node-intake.html">
-      <div class="label">Riverthorn</div>
-      <div class="title">Node Intake</div>
-      <div class="desc">Parse RT_NODE log entries and sync them to the node registry via GitHub.</div>
-    </a>
-  </nav>
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchPanel('capture')">Capture</button>
+    <button class="nav-btn" onclick="switchPanel('browse')">Browse</button>
+    <button class="nav-btn" onclick="switchPanel('connect')">Connect</button>
+    <button class="nav-btn" onclick="switchPanel('context')">Context</button>
+  </div>
+
+  <!-- CAPTURE -->
+  <div class="panel active" id="panel-capture">
+    <div class="node-id-preview" id="nodeIdPreview">RT_NODE_001</div>
+
+    <div class="lbl req">Domain</div>
+    <div class="chips" id="domainChips">
+      <button class="chip" onclick="sel(this,'domain','Show')">Show</button>
+      <button class="chip" onclick="sel(this,'domain','World')">World</button>
+      <button class="chip" onclick="sel(this,'domain','Cards')">Cards</button>
+      <button class="chip" onclick="sel(this,'domain','D&D')">D&D</button>
+      <button class="chip" onclick="sel(this,'domain','Paper')">Paper</button>
+      <button class="chip" onclick="sel(this,'domain','App')">App</button>
+      <button class="chip" onclick="sel(this,'domain','Framework')">Framework</button>
+    </div>
+
+    <div class="lbl req">System Type</div>
+    <div class="chips" id="sysChips">
+      <button class="chip" onclick="sel(this,'sysType','Individual')">Individual</button>
+      <button class="chip" onclick="sel(this,'sysType','Relationship')">Relationship</button>
+      <button class="chip" onclick="sel(this,'sysType','Organization')">Organization</button>
+      <button class="chip" onclick="sel(this,'sysType','Narrative')">Narrative</button>
+      <button class="chip" onclick="sel(this,'sysType','Internal')">Internal</button>
+    </div>
+
+    <div class="lbl req">Thought — raw, do not edit</div>
+    <textarea class="thought-box" id="captureText" placeholder="What just came to you…"></textarea>
+
+    <div class="lbl req">Instability (I) — pressure / mismatch</div>
+    <div class="slider-row">
+      <span class="slider-label">0 = settled</span>
+      <div class="slider-track" id="iTrack" onclick="handleSlider(event,'i')">
+        <div class="slider-fill i-fill" id="iFill" style="width:40%"></div>
+        <div class="slider-thumb" id="iThumb" style="left:40%"></div>
+      </div>
+      <span class="slider-val" id="iVal">4</span>
+    </div>
+
+    <div class="lbl req">Lock (L) — constraint / rigidity</div>
+    <div class="slider-row">
+      <span class="slider-label">0 = open</span>
+      <div class="slider-track" id="lTrack" onclick="handleSlider(event,'l')">
+        <div class="slider-fill l-fill" id="lFill" style="width:30%"></div>
+        <div class="slider-thumb" id="lThumb" style="left:30%"></div>
+      </div>
+      <span class="slider-val" id="lVal">3</span>
+    </div>
+
+    <div class="lbl">Lock Point — what holds this stable?</div>
+    <input class="text-input" id="lockInput" placeholder="what anchors this?" />
+
+    <div class="lbl req">Mechanism — pick one</div>
+    <div class="chips" id="mechChips">
+      <button class="chip" onclick="sel(this,'mechanism','Adaptation Failure')">Adaptation Failure</button>
+      <button class="chip" onclick="sel(this,'mechanism','Pressure Accumulation')">Pressure Accumulation</button>
+      <button class="chip" onclick="sel(this,'mechanism','Constraint Overload')">Constraint Overload</button>
+      <button class="chip" onclick="sel(this,'mechanism','Displacement')">Displacement</button>
+      <button class="chip" onclick="sel(this,'mechanism','Signal Distortion')">Signal Distortion</button>
+    </div>
+
+    <div class="lbl">Pattern Tags — max 2</div>
+    <div class="chips" id="patChips">
+      <button class="chip" onclick="togglePat(this,'overextension')">overextension</button>
+      <button class="chip" onclick="togglePat(this,'burnout')">burnout</button>
+      <button class="chip" onclick="togglePat(this,'false productivity')">false productivity</button>
+      <button class="chip" onclick="togglePat(this,'avoidance')">avoidance</button>
+      <button class="chip" onclick="togglePat(this,'rigidity')">rigidity</button>
+      <button class="chip" onclick="togglePat(this,'escalation')">escalation</button>
+    </div>
+
+    <button class="btn-save" onclick="saveNode()">— Save RT_NODE —</button>
+  </div>
+
+  <!-- BROWSE -->
+  <div class="panel" id="panel-browse">
+    <div class="filter-row" id="filterRow">
+      <button class="chip selected" onclick="filterBy(this,'all')">All</button>
+      <button class="chip" onclick="filterBy(this,'Show')">Show</button>
+      <button class="chip" onclick="filterBy(this,'World')">World</button>
+      <button class="chip" onclick="filterBy(this,'Cards')">Cards</button>
+      <button class="chip" onclick="filterBy(this,'D&D')">D&D</button>
+      <button class="chip" onclick="filterBy(this,'Paper')">Paper</button>
+      <button class="chip" onclick="filterBy(this,'App')">App</button>
+      <button class="chip" onclick="filterBy(this,'Framework')">Framework</button>
+    </div>
+    <div id="nodeList"></div>
+  </div>
+
+  <!-- CONNECT -->
+  <div class="panel" id="panel-connect">
+    <div class="lbl">Select two nodes to connect</div>
+    <div class="map-area" id="mapArea"></div>
+    <div id="connForm" style="display:none">
+      <div class="lbl">Connection type</div>
+      <div class="conn-types">
+        <button class="conn-type active" onclick="selCT(this,'feeds')">feeds</button>
+        <button class="conn-type" onclick="selCT(this,'mirrors')">mirrors</button>
+        <button class="conn-type" onclick="selCT(this,'tensions')">tensions</button>
+        <button class="conn-type" onclick="selCT(this,'locks')">locks</button>
+        <button class="conn-type" onclick="selCT(this,'destabilizes')">destabilizes</button>
+      </div>
+      <button class="btn-save" style="margin-top:8px" onclick="saveConn()">— Create Connection —</button>
+    </div>
+    <div id="edgeList" style="margin-top:16px"></div>
+  </div>
+
+  <!-- CONTEXT -->
+  <div class="panel" id="panel-context">
+    <div class="lbl">Generate context package</div>
+    <div class="ctx-btns">
+      <button class="ctx-btn" onclick="buildCtx('spine')">Spine only</button>
+      <button class="ctx-btn" onclick="buildCtx('recent')">Recent 10</button>
+      <button class="ctx-btn" onclick="buildCtx('all')">All nodes</button>
+    </div>
+    <div class="ctx-preview" id="ctxPreview">Select a context type to generate your AI load package.</div>
+    <div class="ctx-btns">
+      <button class="ctx-btn primary" onclick="copyCtx()">Copy to clipboard</button>
+      <button class="ctx-btn" onclick="document.getElementById('ctxPreview').textContent='Select a context type to generate your AI load package.'">Clear</button>
+    </div>
+    <div class="lbl" style="margin-top:4px">Paste into Claude or ChatGPT to restore context</div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <button class="bnav-btn active" id="nav-capture" onclick="switchPanel('capture')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Capture
+  </button>
+  <button class="bnav-btn" id="nav-browse" onclick="switchPanel('browse')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Browse
+  </button>
+  <button class="bnav-btn" id="nav-connect" onclick="switchPanel('connect')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11.5l8-4M8 12.5l8 4"/></svg>Connect
+  </button>
+  <button class="bnav-btn" id="nav-context" onclick="switchPanel('context')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Context
+  </button>
+  <a class="bnav-btn" href="node-intake.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v12M8 11l4 4 4-4M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/></svg>Intake
+  </a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SPINE = `RIVERTHORN FRAMEWORK — Spine v1.0 — Origin: March 1, 2026
+
+CORE: Real things are not stable. RiverThorn maps, measures, and uses instability rather than eliminating it. A living system stays coherent BECAUSE of its instability, not in spite of it.
+
+TWO FORCES:
+- INSTABILITY (I): fuzziness, drift, wobble — makes a system real and alive
+- LOCK (L): NOT stability — the center point keeping a system coherent while in motion
+
+EQUATION: I + L → Coherent Living System
+Too much Lock → rigid/dead. Too much Instability → collapse. Right ratio → alive.
+
+FAILURE CONDITIONS:
+- I > I_max → collapse/burnout/chaos
+- L > L_max → paralysis/brittleness  
+- I↑ AND L↑ → system fracture (worst case)
+
+FIXED MECHANISMS (5 only — no custom labels):
+1. Adaptation Failure
+2. Pressure Accumulation
+3. Constraint Overload
+4. Displacement
+5. Signal Distortion
+
+ECOSYSTEM: Show | World | Cards | D&D | Paper | App | Framework
+All expressions of the same underlying model.
+
+NODE FORMAT: RT_NODE_### — sequential, zero-padded, never reused. One node = one system state.
+
+ORIGIN: "ChatGPT wrote it. I made it." The insight existed before the language.`;
+
+let nodes = JSON.parse(localStorage.getItem('rt_v2_nodes') || '[]');
+let edges = JSON.parse(localStorage.getItem('rt_v2_edges') || '[]');
+let nextId = parseInt(localStorage.getItem('rt_v2_next') || '1');
+let cap = { domain:null, sysType:null, mechanism:null, patterns:[] };
+let iVal=4, lVal=3, curFilter='all', cA=null, cB=null, cType='feeds';
+
+function persist() {
+  localStorage.setItem('rt_v2_nodes', JSON.stringify(nodes));
+  localStorage.setItem('rt_v2_edges', JSON.stringify(edges));
+  localStorage.setItem('rt_v2_next', nextId.toString());
+  const id = 'RT_NODE_' + String(nextId).padStart(3,'0');
+  document.getElementById('nextIdDisplay').textContent = String(nextId).padStart(3,'0');
+  document.getElementById('nodeIdPreview').textContent = id;
+}
+
+function switchPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn,.bnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  ['capture','browse','connect','context'].forEach((n,i)=>{ if(n===name) document.querySelectorAll('.nav-btn')[i].classList.add('active'); });
+  if(name==='browse') renderNodes();
+  if(name==='connect') renderConnect();
+}
+
+function sel(el, field, val) {
+  el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  cap[field] = val;
+}
+
+function togglePat(el, val) {
+  if(el.classList.contains('selected')) { el.classList.remove('selected'); cap.patterns=cap.patterns.filter(p=>p!==val); }
+  else { if(cap.patterns.length>=2){showToast('Max 2 patterns');return;} el.classList.add('selected'); cap.patterns.push(val); }
+}
+
+function handleSlider(e, t) {
+  const track = document.getElementById(t==='i'?'iTrack':'lTrack');
+  const rect = track.getBoundingClientRect();
+  const pct = Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));
+  setSlider(t, Math.round(pct*10));
+}
+function setSlider(t, v) {
+  const p = v*10;
+  if(t==='i'){iVal=v;document.getElementById('iFill').style.width=p+'%';document.getElementById('iThumb').style.left=p+'%';document.getElementById('iVal').textContent=v;}
+  else{lVal=v;document.getElementById('lFill').style.width=p+'%';document.getElementById('lThumb').style.left=p+'%';document.getElementById('lVal').textContent=v;}
+}
+(function(){
+  let drag=null;
+  document.addEventListener('touchstart',e=>{if(e.target.id==='iThumb'){drag='i';e.preventDefault();}if(e.target.id==='lThumb'){drag='l';e.preventDefault();}},{passive:false});
+  document.addEventListener('touchmove',e=>{if(!drag)return;e.preventDefault();const t=document.getElementById(drag==='i'?'iTrack':'lTrack');const r=t.getBoundingClientRect();setSlider(drag,Math.round(Math.max(0,Math.min(1,(e.touches[0].clientX-r.left)/r.width))*10));},{passive:false});
+  document.addEventListener('touchend',()=>{drag=null;});
+})();
+
+function saveNode() {
+  const text = document.getElementById('captureText').value.trim();
+  if(!text){showToast('Add a thought first');return;}
+  if(!cap.domain){showToast('Select a domain *');return;}
+  if(!cap.sysType){showToast('Select a system type *');return;}
+  if(!cap.mechanism){showToast('Select a mechanism *');return;}
+  const id = 'RT_NODE_'+String(nextId).padStart(3,'0');
+  nodes.unshift({id,seq:nextId,text,domain:cap.domain,sysType:cap.sysType,mechanism:cap.mechanism,patterns:[...cap.patterns],i:iVal,l:lVal,lock:document.getElementById('lockInput').value.trim(),created:new Date().toISOString()});
+  nextId++;
+  persist();
+  document.getElementById('captureText').value='';
+  document.getElementById('lockInput').value='';
+  document.querySelectorAll('#domainChips .chip,#sysChips .chip,#mechChips .chip,#patChips .chip').forEach(c=>c.classList.remove('selected'));
+  cap={domain:null,sysType:null,mechanism:null,patterns:[]};
+  setSlider('i',4);setSlider('l',3);
+  showToast(id+' saved');
+}
+
+function filterBy(el,val){document.querySelectorAll('#filterRow .chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');curFilter=val;renderNodes();}
+
+function renderNodes() {
+  const list = document.getElementById('nodeList');
+  const filtered = curFilter==='all'?nodes:nodes.filter(n=>n.domain===curFilter);
+  if(!filtered.length){list.innerHTML='<div class="empty">No nodes yet.<br>Capture your first thought.</div>';return;}
+  list.innerHTML = filtered.map(n=>{
+    const date = new Date(n.created).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const ne = edges.filter(e=>e.a===n.id||e.b===n.id);
+    return `<div class="node-card" id="card-${n.id}" onclick="toggleCard('${n.id}')">
+      <div class="card-id">${n.id}</div>
+      <div class="card-tags">
+        <span class="tag t-domain">${n.domain||''}</span>
+        <span class="tag t-sys">${n.sysType||''}</span>
+        <span class="tag t-mech">${n.mechanism||''}</span>
+        ${n.patterns.map(p=>`<span class="tag t-pat">${p}</span>`).join('')}
+      </div>
+      <div class="card-thought">${n.text}</div>
+      <div class="card-state">
+        <span style="font-size:9px;color:var(--muted)">I</span>
+        <div class="state-bar"><div class="state-bar-fill i-fill" style="width:${n.i*10}%"></div></div>
+        <span style="font-size:9px;color:var(--thorn)">${n.i}</span>
+        <span style="font-size:9px;color:var(--muted);margin-left:6px">L</span>
+        <div class="state-bar"><div class="state-bar-fill l-fill" style="width:${n.l*10}%"></div></div>
+        <span style="font-size:9px;color:var(--thorn)">${n.l}</span>
+        <span style="font-size:9px;color:var(--muted);margin-left:auto">${date}${ne.length?' · '+ne.length+' links':''}</span>
+      </div>
+      <div class="card-expanded">
+        ${n.lock?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px">lock: <span style="color:var(--text);font-family:'Cormorant Garamond',serif;font-size:13px">${n.lock}</span></div>`:''}
+        <button class="ctx-btn" style="font-size:9px;margin-top:4px" onclick="event.stopPropagation();delNode('${n.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleCard(id){document.getElementById('card-'+id).classList.toggle('expanded');}
+function delNode(id){nodes=nodes.filter(n=>n.id!==id);edges=edges.filter(e=>e.a!==id&&e.b!==id);persist();renderNodes();}
+
+function renderConnect() {
+  const area=document.getElementById('mapArea');cA=null;cB=null;
+  document.getElementById('connForm').style.display='none';
+  if(!nodes.length){area.innerHTML='<div class="empty">Capture some nodes first</div>';renderEdges();return;}
+  area.innerHTML=nodes.map(n=>`<button class="conn-node" id="cn-${n.id}" onclick="selCN('${n.id}')"><span style="font-size:8px;color:var(--thorn)">${n.id.replace('RT_NODE_','#')}</span> <span>${n.text.substring(0,26)}${n.text.length>26?'…':''}</span></button>`).join('');
+  renderEdges();
+}
+function selCN(id){
+  if(!cA){cA=id;document.getElementById('cn-'+id).classList.add('sel-a');}
+  else if(!cB&&id!==cA){cB=id;document.getElementById('cn-'+id).classList.add('sel-b');document.getElementById('connForm').style.display='block';}
+  else{document.querySelectorAll('.conn-node').forEach(n=>n.classList.remove('sel-a','sel-b'));cA=id;cB=null;document.getElementById('cn-'+id).classList.add('sel-a');document.getElementById('connForm').style.display='none';}
+}
+function selCT(el,val){document.querySelectorAll('.conn-type').forEach(b=>b.classList.remove('active'));el.classList.add('active');cType=val;}
+function saveConn(){
+  if(!cA||!cB)return;
+  if(edges.find(e=>(e.a===cA&&e.b===cB)||(e.a===cB&&e.b===cA))){showToast('Already connected');return;}
+  edges.push({id:Date.now().toString(),a:cA,b:cB,type:cType});persist();showToast('Connection saved');renderConnect();
+}
+function renderEdges(){
+  const list=document.getElementById('edgeList');
+  if(!edges.length){list.innerHTML='';return;}
+  list.innerHTML='<div class="lbl">Connections</div>'+edges.map(e=>{const na=nodes.find(n=>n.id===e.a),nb=nodes.find(n=>n.id===e.b);if(!na||!nb)return'';return`<div class="edge-item"><span style="font-size:10px">${e.a.replace('RT_NODE_','#')}</span><span style="color:var(--muted)">→</span><span class="edge-type">${e.type}</span><span style="color:var(--muted)">→</span><span style="font-size:10px">${e.b.replace('RT_NODE_','#')}</span></div>`;}).join('');
+}
+
+function buildCtx(mode){
+  let out=SPINE+'\n\n---\n\n';
+  const pool=mode==='spine'?[]:mode==='recent'?nodes.slice(0,10):nodes;
+  if(pool.length){
+    out+=`NODES (${pool.length}):\n\n`;
+    pool.forEach(n=>{out+=`${n.id} [${n.domain}][${n.sysType}][${n.mechanism}]${n.patterns.length?'['+n.patterns.join('][')+']':''}\nTHOUGHT: ${n.text}\nI:${n.i} L:${n.l}${n.lock?' LOCK:'+n.lock:''}\n\n`;});
+  }
+  out+='---\nYou are loaded with RiverThorn context. Continue building from here.';
+  document.getElementById('ctxPreview').textContent=out;
+}
+function copyCtx(){
+  const text=document.getElementById('ctxPreview').textContent;
+  if(text.startsWith('Select')){showToast('Generate context first');return;}
+  navigator.clipboard.writeText(text).catch(()=>{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});
+  showToast('Copied to clipboard');
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+persist();
+</script>
 </body>
 </html>
